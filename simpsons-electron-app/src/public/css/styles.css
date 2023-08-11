@@ -19,6 +19,8 @@ body {
 body {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   background-color: #45c6bc;
   font-family: "ruddy",sans-serif;
 }
@@ -384,7 +386,9 @@ ul {
  
 
 
- // -----------------  Start game  -----------------
+ /* -----------------  ONBOARDING  -----------------  */
+
+ 
 
  .tutorial__container{
   display:flex;
@@ -404,10 +408,19 @@ ul {
   background-color: var(--color-white);
   border-radius: 10px;
   width: 40rem;
-  height: 40rem;
+  height: 30rem;
  }
 
+ .tutorial__username__container, .tutorial__connect__container, .tutorial__tutorial__container{
+  display:flex;
+  flex-direction: column; 
+  justify-content: center;
+  align-items: center;
+ }
 
+.btn__next{
+  margin-block: 2rem;
+}
 
 
 @keyframes handUp {
@@ -439,3 +452,5 @@ ul {
 .tutorial__img{
   animation: handUp 1s ease-in-out infinite;
 }
+
+

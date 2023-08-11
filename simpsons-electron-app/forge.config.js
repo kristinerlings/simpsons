@@ -1,6 +1,7 @@
 module.exports = {
   packagerConfig: {
     asar: true,
+    icon: '/src/public/assets/doughnut-icon.icns',
   },
   rebuildConfig: {},
   makers: [

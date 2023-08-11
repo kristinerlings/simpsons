@@ -10,66 +10,60 @@
   <title>Which Simposns are you?</title>
 </head>
 
-<body class="body"> <!-- call function   onload="hideGame()"-->
+<body class="body" onload="hideGame()"> <!-- call function   onload=" hideGame()"-->
   <div class="tutorial__container">
     <div class="tutorial__panel">
       <div class="tutorial__username__container">
         <h2>Write your name here</h2>
-        <input id="username__input" placeholder="username">
+        <form id="nameForm" method="post" action=""> 
+          <input id="nameInput" type="text" name="nameInput" placeholder="username">
+          <!-- <button type="submit">Submit Name</button>
+          <span class="error"></span>-->
+         </form> 
       </div>
-      <div class="tutorial__arduino__container">
-        <div class="container__qr">
-          <h1 class="title hidden">Desktop</h1>
-          <div id="app">
-            <button id="connect-button">Connect to serial port</button>
-            <div id="not-supported">
-              Web Serial is not supported in this browser.
-            </div>
-            <div id="supported">
-              <div id="not-connected">
-                Not Connected
-              </div>
-              <div id="connected">
-                Connected
-              </div>
-            </div>
-          </div>
+      <div class="tutorial__connect__container">
+        <div class="start__connect">
+          <h2>Let's make it more fun</h2>
+          <p>Select a friend to connect with</p>
+          <label for="otherSocketIds">Peer: </label>
+          <select id="otherSocketIds"></select>
         </div>
       </div>
       <div class="tutorial__tutorial__container">
         <h2>How to play</h2>
-        <img class="tutorial__img" src="./assets/hand.png" alt="simpson hand" height="150px">
+        <img class="tutorial__img" src="./assets/hand.png" alt="simpson hand" width="80px">
         <p>Get your hands close to the sensor to raise your hand up</p>
         <p></p>
       </div>
 
       <button onclick="setUserConfiguration()" class="btn__next">Next</button>
     </div>
+  </div>
 
-    <div id="game__container" class="container__page">
-      <section class="container__begin">
-        <div class="container__qr">
-          <h1 class="title hidden">Desktop</h1>
-          <div id="app">
-            <button id="connect-button">Connect to serial port</button>
-            <div id="not-supported">
-              Web Serial is not supported in this browser.
+  <div id="game__container" class="container__page">
+    <section class="container__begin">
+      <div class="container__qr">
+        <h1 class="title hidden">Desktop</h1>
+        <div id="app">
+          <button id="connect-button">Connect to serial port</button>
+          <div id="not-supported">
+            Web Serial is not supported in this browser.
+          </div>
+          <div id="supported">
+            <div id="not-connected">
+              Not Connected
             </div>
-            <div id="supported">
-              <div id="not-connected">
-                Not Connected
-              </div>
-              <div id="connected">
-                Connected
-              </div>
+            <div id="connected">
+              Connected
             </div>
           </div>
-          <section class="container__start">
-            <!-- Write your name -->
-            <div class="start__name hidden screen screen--visible">
-              <h2>Ready to find out which Simpsons character you are?</h2>
-              <p>What is your name?</p>
-              <!-- <form id="nameForm" method="post" action="">
+        </div>
+        <section class="container__start">
+          <!-- Write your name -->
+          <div class="start__name hidden screen screen--visible">
+            <h2>Ready to find out which Simpsons character you are?</h2>
+            <p>What is your name?</p>
+            <!-- <form id="nameForm" method="post" action="">
               <input id="nameInput" type="text" name="nameInput">
               <button type="submit">Submit Name</button>
               <span class="error"></span>
@@ -79,121 +73,126 @@
               <input type="text" id="name" required>
               <button type="submit">Submit and continue</button>
             </form> -->
-            </div>
-            <!-- Connect with other user-->
-            <div class="start__connect">
-              <h2>Let's make it more fun</h2>
-              <p>Select an user to connect with</p>
-              <label for="otherSocketIds">Peer: </label>
-              <select id="otherSocketIds"></select>
+          </div>
+          <!-- Connect with other user
+          <div class="start__connect">
+            <h2>Let's make it more fun</h2>
+            <p>Select an user to connect with</p>
+            <label for="otherSocketIds">Peer: </label>
+            <select id="otherSocketIds"></select>
 
-            </div>
-          </section>
-        </div>
-
-
-        <h2 class="questions__title">Which Simpsons are you?</h2>
-
-        <!-- Remote Scores: other user -->
-        <section class="container__users visibility">
-          <h2 class="hidden">User Scores</h2>
-          <!--  <img class="user__img" src="./assets/homer.png"> -->
-          <ul class="user__scores">
-            <li>Other user:</li>
-            <li><img src="./assets/icon-dark-f.svg" alt="icon marge" width="33" height="33"></li>
-            <li class="user__score--marge">0</li>
-            <li><img src="./assets/icon-dark-m.svg" alt="icon homer" width="40" height="40"></li>
-            <li class="user__score--homer">0</li>
-          </ul>
-          <a href="#test" class="btn__retake hidden">Retake the quiz</a>
+          </div>-->
         </section>
+      </div>
+
+
+      <h2 class="questions__title">Which Simpsons are you?</h2>
+
+      <!-- Remote Scores: other user -->
+      <section class="container__users visibility">
+        <h2 class="hidden">User Scores</h2>
+        <!--  <img class="user__img" src="./assets/homer.png"> -->
+        <ul class="user__scores">
+          <li>Other user:</li>
+          <li><img src="./assets/icon-dark-f.svg" alt="icon marge" width="33" height="33"></li>
+          <li class="user__score--marge">0</li>
+          <li><img src="./assets/icon-dark-m.svg" alt="icon homer" width="40" height="40"></li>
+          <li class="user__score--homer">0</li>
+        </ul>
+        <a href="#test" class="btn__retake hidden">Retake the quiz</a>
       </section>
-      <!--</div>-->
+    </section>
+    <!--</div>-->
 
 
 
-      <section class="container__questions " id="test">
-        <h3 class="hidden">The questions</h3>
-        <!--   <img class="img__simpsons img__marge" src="./assets/marge.png" alt="Marge Simpsons" width="306" height="418">-->
-        <div class="camera">
-          <div class="video__container">
-            <video id="myVideo" playsinline autoplay muted></video>
-            <!-- ====  SHOW  RESULTS   ==== -->
-            <!-- add video later as well -->
-
-            <div class="questions">
-              <p class="question" id="question"></p>
-              <!-- select answer / buttons-->
-              <section class="container__options" id="test">
-                <ul class="list__options">
-                  <li id="optionOne" class="option__a"></li>
-                  <li id="optionTwo" class="option__b"></li>
-                </ul>
-              </section>
-
-
-              <!-- my local score count -->
-              <div class="questions__scoreboard">
-                <ul class="score__sections--marge">
-                  <li class="section"><img src="./assets/icon-yellow-f.svg" alt="icon marge" width="33" height="33">
-                  </li>
-                  <li class="score nature" id="natureScore">0</li>
-                </ul>
-                <ul class="score__sections--homer">
-                  <li class="section"><img src="./assets/icon-yellow-m.svg" alt="icon homer" width="40" height="40">
-                  </li>
-                  <li class="score indoor" id="indoorScore">0</li>
-                </ul>
-              </div>
-            </div>
-            <h3 class="result__title"></h3>
-            <img id="finalImgLocal" src="" alt="" widht="390" height="480">
-            <img class="img__video--marge hidden" src="./assets/marge-l.png">
-            <img class="img__video--homer hidden" src="./assets/doughnut.png">
-            <a href="#test" class="btn__retake btn--solo hidden">Retake the quiz</a>
-          </div>
-          <div class="showResult visibility">
-            <h3 class="result__title"></h3>
-
-            <img id="finalImgLocal" src="" alt="" widht="390" height="480">
-
-          </div>
-
-
+    <section class="container__questions " id="test">
+      <h3 class="hidden">The questions</h3>
+      <!--   <img class="img__simpsons img__marge" src="./assets/marge.png" alt="Marge Simpsons" width="306" height="418">-->
+      <div class="camera">
+        <div class="video__container">
+          <video id="myVideo" playsinline autoplay muted></video>
+          <!-- ====  SHOW  RESULTS   ==== -->
           <!-- add video later as well -->
-          <div class="showResult--remote hidden">
-            <h2>Receiver: </h2>
-            <!--<h3 class="result__final">Waiting for your friends results...</h3>-->
-            <div class="remote__visuals">
-              <h3 class="result__final">Waiting for your friends results...</h3>
-              <img id="finalImgExternal" src="" alt="" widht="390" height="480">
-              <video id="otherVideo" class="hidden" playsinline autoplay muted></video>
+
+          <div class="questions">
+            <p class="question" id="question"></p>
+            <!-- select answer / buttons-->
+            <section class="container__options" id="test">
+              <ul class="list__options">
+                <li id="optionOne" class="option__a"></li>
+                <li id="optionTwo" class="option__b"></li>
+              </ul>
+            </section>
+
+
+            <!-- my local score count -->
+            <div class="questions__scoreboard">
+              <ul class="score__sections--marge">
+                <li class="section"><img src="./assets/icon-yellow-f.svg" alt="icon marge" width="33" height="33">
+                </li>
+                <li class="score nature" id="natureScore">0</li>
+              </ul>
+              <ul class="score__sections--homer">
+                <li class="section"><img src="./assets/icon-yellow-m.svg" alt="icon homer" width="40" height="40">
+                </li>
+                <li class="score indoor" id="indoorScore">0</li>
+              </ul>
+            </div>
+            <div class="countdown__countainer">
+              <h3 class="countdown__title">Countdown</h3>
+              <p id="countdown__display" class="countdown__number">0</p>
             </div>
           </div>
 
-          <!--      <button id="btn__send">Send Message</button>-->
+          <h3 class="result__title"></h3>
+          <img id="finalImgLocal" src="" alt="" widht="390" height="480">
+          <img class="img__video--marge hidden" src="./assets/marge-l.png">
+          <img class="img__video--homer hidden" src="./assets/doughnut.png">
+          <a href="#test" class="btn__retake btn--solo hidden">Retake the quiz</a>
         </div>
-        <!-- <img class="img__simpsons img__homer" src="./assets/homer.png" alt="Homer Simpsons" width="306" height="418">-->
+        <div class="showResult visibility">
+          <h3 class="result__title"></h3>
+
+          <img id="finalImgLocal" src="" alt="" widht="390" height="480">
+
+        </div>
+
+
+        <!-- add video later as well -->
+        <div class="showResult--remote hidden">
+          <h2>Receiver: </h2>
+          <!--<h3 class="result__final">Waiting for your friends results...</h3>-->
+          <div class="remote__visuals">
+            <h3 class="result__final">Waiting for your friends results...</h3>
+            <img id="finalImgExternal" src="" alt="" widht="390" height="480">
+            <video id="otherVideo" class="hidden" playsinline autoplay muted></video>
+          </div>
+        </div>
+
+        <!--      <button id="btn__send">Send Message</button>-->
+      </div>
+      <!-- <img class="img__simpsons img__homer" src="./assets/homer.png" alt="Homer Simpsons" width="306" height="418">-->
 
 
 
-        <!-- retake quiz -->
+      <!-- retake quiz -->
 
-        <!-- <a href="#test" class="btn__retake hidden">Retake the quiz</a> -->
+      <!-- <a href="#test" class="btn__retake hidden">Retake the quiz</a> -->
 
-      </section><!-- Close container__questions-->
+    </section><!-- Close container__questions-->
 
-    </div><!--  close container__page-->
-
-
+  </div><!--  close container__page-->
 
 
 
-    <script src="https://cdn.socket.io/4.7.1/socket.io.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.11.1/simplepeer.min.js"
-      integrity="sha512-0f7Ahsuvr+/P2btTY4mZIw9Vl23lS6LY/Y7amdkmUg2dqsUF+cTe4QjWvj/NIBHJoGksOiqndKQuI9yzn2hB0g=="
-      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="./js/client.js"></script>
+
+
+  <script src="https://cdn.socket.io/4.7.1/socket.io.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-peer/9.11.1/simplepeer.min.js"
+    integrity="sha512-0f7Ahsuvr+/P2btTY4mZIw9Vl23lS6LY/Y7amdkmUg2dqsUF+cTe4QjWvj/NIBHJoGksOiqndKQuI9yzn2hB0g=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="./js/client.js"></script>
 </body>
 
 </html>

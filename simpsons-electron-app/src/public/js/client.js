@@ -1,31 +1,7 @@
-/* const hideGame = () => {
-  document.querySelector('.tutorial__container').style.display = 'none';
-  document.querySelector('.tutorial__arduino__container').style.display =
-    'none';
-};
+/*=======================================
+          1. Start Game 
+    =========================================*/
 
-let stepNumber = 0;
-let usernameValue = '';
-
-const setUserConfiguration = () => {
-  if (stepNumber === 0) {
-    const $username = document.getElementById('username__input').value;
-    usernameValue = $username;
-    stepNumber++;
-    document.querySelector('.tutorial__arduino__container').style.display =
-      'flex';
-    document.querySelector('.tutorial__username__container').style.display =
-      'none';
-  } else if (stepNumber === 1) {
-    stepNumber++;
-    document.querySelector('.tutorial__arduino__container').style.display =
-      'none';
-    document.querySelector('.tutorial__tutorial__container').style.display =
-      'flex';
-  } else {
-  }
-};
- */
 const $video = document.getElementById('myVideo');
 const $otherVideo = document.getElementById('otherVideo');
 const $otherSocketIds = document.getElementById('otherSocketIds');
@@ -129,11 +105,13 @@ const setTime = () => {
 
 const checkTime = () => {
   const currentTime = getTime();
-  const timer = 4; //delay of 4
+  const timer = 6; //delay of 4
   const difference = Math.abs(currentTime - startTime);
   const isReady = difference > timer;
   // Use this log as an example for the timer
   console.log(timer - difference);
+  document.getElementById('countdown__display').textContent = difference; //display countdown
+
   return isReady;
 
   //if (isReady && difference < timer + 1) {
@@ -505,14 +483,19 @@ const displayScores = () => {
 
 const $screenName = document.querySelector('.start__name');
 const $nameForm = document.getElementById('nameForm');
-const $nameInput = document.getElementById('nameInput');
+
 const $nameError = $screenName.querySelector('.error');
+
 const handleSubmitName = (event) => {
-  event.preventDefault();
+  const $nameInput = document.getElementById('nameInput');
+  // event.preventDefault();
+  console.log($nameInput.value);
   if ($nameInput.value) {
     socket.emit('name', $nameInput.value);
+    console.log('handleSubmitName works');
   }
 };
+
 //If I'm going to have multiple screens = good idea to have generic function that receives elements to show
 const showScreen = ($screen) => {
   $screenName.classList.toggle('screen--visible', $screen === $screenName);
@@ -620,11 +603,12 @@ const initSocket = () => {
     }
   });
 
-  // socket.on('name', client => {
-  //  console.log('you are now named', client.name);
-  //  $screenName.classList.remove('screen--visible');
-  //   showScreen($screenName);
-  // });
+  socket.on('name', (client) => {
+    console.log('you are now named', client.name);
+
+    //$screenName.classList.remove('screen--visible');
+    // showScreen($screenName);
+  });
 
   //$nameForm.addEventListener('submit', event => { handleSubmitName(event); });
 };
@@ -656,7 +640,7 @@ const updatePeerList = (clients) => {
       if (otherClient.id !== socket.id) {
         const $option = document.createElement('option');
         $option.value = otherClient.id;
-        $option.textContent = otherClient.id;
+        $option.textContent = otherClient.name || otherClient.id;
         $otherSocketIds.appendChild($option);
       }
     }
@@ -815,3 +799,50 @@ const handlePeerOffer = async (myPeerId, offer, peerId) => {
 };
 
 init();
+
+/*=======================================
+          1. Onboarding
+    =========================================*/
+
+const $tutorialContainer = document.querySelector('.tutorial__container');
+const $gameContainer = document.getElementById('game__container');
+const $tutorailConnectContainer = document.querySelector(
+  '.tutorial__connect__container'
+);
+const $tutorialTutorialContainer = document.querySelector(
+  '.tutorial__tutorial__container'
+);
+let stepNumber = 0;
+let usernameValue = '';
+
+const hideGame = () => {
+  $tutorialContainer.style.display = 'flex';
+  $gameContainer.style.display = 'none';
+  $tutorailConnectContainer.style.display = 'none';
+  $tutorialTutorialContainer.style.display = 'none';
+};
+
+const setUserConfiguration = () => {
+  const $username = document.getElementById('nameInput');
+  const $usernameContainer = document.querySelector(
+    '.tutorial__username__container'
+  );
+
+  if (stepNumber === 0) {
+    $usernameContainer.style.display = 'flex';
+    console.log('working username');
+    handleSubmitName();
+    stepNumber++;
+    $tutorailConnectContainer.style.display = 'flex';
+    $tutorialTutorialContainer.style.display = 'none';
+    $usernameContainer.style.display = 'none';
+  } else if (stepNumber === 1) {
+    stepNumber++;
+    $tutorailConnectContainer.style.display = 'none';
+    $tutorialTutorialContainer.style.display = 'flex';
+    $usernameContainer.style.display = 'none';
+  } else {
+    $tutorialContainer.style.display = 'none';
+    $gameContainer.style.display = 'flex';
+  }
+};

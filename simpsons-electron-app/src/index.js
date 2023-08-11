@@ -11,8 +11,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    //icon: '/public/assets/doughnut-icon.png',
-    icon: path.join(__dirname, './public/assets/doughnut-icon.png'),
+    icon: './public/assets/doughnut-icon.icns',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
@@ -59,7 +58,9 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
   /* const appIcon = new Tray('/icon/assets/doughnut.png'); */
-  const appIcon = new Tray(path.join(__dirname, './public/assets/doughnut-icon.png'));
+  const appIcon = new Tray(
+   './public/assets/doughnut-icon.icns' );
+
   createWindow();
 });
 

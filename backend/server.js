@@ -26,7 +26,7 @@ const io = new Server(server);
 
 const clients = {};
 io.on('connection', (socket) => {
-  clients[socket.id] = { id: socket.id, name: 'Kristin' };
+  clients[socket.id] = { id: socket.id, name: '' };
 
   socket.on('disconnect', () => {
     //io.emit('client-disconnect', clients[socket.id]);

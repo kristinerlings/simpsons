@@ -10,8 +10,37 @@
   <title>Which Simposns are you?</title>
 </head>
 
-<body class="body">
-  <div class="container__page">
+<body class="body"> <!-- call function   onload=" hideGame()"-->
+  <div class="tutorial__container">
+    <div class="tutorial__panel">
+      <div class="tutorial__username__container">
+        <h2>Write your name here</h2>
+        <!--<form id="nameForm" method="post" action="">-->
+        <input id="nameInput" type="text" name="nameInput" placeholder="username">
+        <!-- <button type="submit">Submit Name</button>
+          <span class="error"></span>-->
+        <!-- </form>-->
+      </div>
+      <div class="tutorial__connect__container">
+        <div class="start__connect">
+          <h2>Let's make it more fun</h2>
+          <p>Select a friend to connect with</p>
+          <label for="otherSocketIds">Peer: </label>
+          <select id="otherSocketIds"></select>
+        </div>
+      </div>
+      <div class="tutorial__tutorial__container">
+        <h2>How to play</h2>
+        <img class="tutorial__img" src="./assets/hand.png" alt="simpson hand" width="80px">
+        <p>Get your hands close to the sensor to raise your hand up</p>
+        <p></p>
+      </div>
+
+      <button onclick="setUserConfiguration()" class="btn__next">Next</button> <!-- because I only have one function to exicute = onclick -->
+    </div>
+  </div>
+
+  <div id="game__container" class="container__page">
     <section class="container__begin">
       <div class="container__qr">
         <h1 class="title hidden">Desktop</h1>
@@ -45,14 +74,14 @@
               <button type="submit">Submit and continue</button>
             </form> -->
           </div>
-          <!-- Connect with other user-->
+          <!-- Connect with other user
           <div class="start__connect">
             <h2>Let's make it more fun</h2>
             <p>Select an user to connect with</p>
             <label for="otherSocketIds">Peer: </label>
             <select id="otherSocketIds"></select>
 
-          </div>
+          </div>-->
         </section>
       </div>
 
@@ -74,7 +103,7 @@
       </section>
     </section>
     <!--</div>-->
-  
+
 
 
     <section class="container__questions " id="test">
@@ -85,7 +114,7 @@
           <video id="myVideo" playsinline autoplay muted></video>
           <!-- ====  SHOW  RESULTS   ==== -->
           <!-- add video later as well -->
-          
+
           <div class="questions">
             <p class="question" id="question"></p>
             <!-- select answer / buttons-->
@@ -95,20 +124,27 @@
                 <li id="optionTwo" class="option__b"></li>
               </ul>
             </section>
-            
+
 
             <!-- my local score count -->
             <div class="questions__scoreboard">
               <ul class="score__sections--marge">
-                <li class="section"><img src="./assets/icon-yellow-f.svg" alt="icon marge" width="33" height="33"></li>
+                <li class="section"><img src="./assets/icon-yellow-f.svg" alt="icon marge" width="33" height="33">
+                </li>
                 <li class="score nature" id="natureScore">0</li>
               </ul>
               <ul class="score__sections--homer">
-                <li class="section"><img src="./assets/icon-yellow-m.svg" alt="icon homer" width="40" height="40"></li>
+                <li class="section"><img src="./assets/icon-yellow-m.svg" alt="icon homer" width="40" height="40">
+                </li>
                 <li class="score indoor" id="indoorScore">0</li>
               </ul>
             </div>
+            <div class="countdown__countainer">
+              <h3 class="countdown__title">Countdown</h3>
+              <p id="countdown__display" class="countdown__number">0</p>
+            </div>
           </div>
+
           <h3 class="result__title"></h3>
           <img id="finalImgLocal" src="" alt="" widht="390" height="480">
           <img class="img__video--marge hidden" src="./assets/marge-l.png">
@@ -121,7 +157,7 @@
           <img id="finalImgLocal" src="" alt="" widht="390" height="480">
 
         </div>
-          
+
 
         <!-- add video later as well -->
         <div class="showResult--remote hidden">
@@ -129,7 +165,7 @@
           <!--<h3 class="result__final">Waiting for your friends results...</h3>-->
           <div class="remote__visuals">
             <h3 class="result__final">Waiting for your friends results...</h3>
-            <img id="finalImgExternal" src="" alt=""  widht="390" height="480">
+            <img id="finalImgExternal" src="" alt="" widht="390" height="480">
             <video id="otherVideo" class="hidden" playsinline autoplay muted></video>
           </div>
         </div>
@@ -147,8 +183,6 @@
     </section><!-- Close container__questions-->
 
   </div><!--  close container__page-->
-
-
 
 
 
