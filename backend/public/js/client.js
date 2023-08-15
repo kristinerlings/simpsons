@@ -1,8 +1,19 @@
+/*
+1. Onboarding
+2. Start Game
+3. Arduino
+  3.1. Ping Distance Sensor
+  3.2. Servo Motor
+4. Quiz Logic
+
+*/
+
 /*=======================================
           1. Onboarding
     =========================================*/
 
 const $tutorialContainer = document.querySelector('.tutorial__container');
+const $tutorialPanel = document.querySelector('.tutorial__panel');
 const $gameContainer = document.getElementById('game__container');
 const $backButton = document.querySelector('.btn__back');
 const $tutorialIntroContainer = document.querySelector(
@@ -19,6 +30,7 @@ const $usernameContainer = document.querySelector(
 );
 const $username = document.getElementById('nameInput');
 const $nextButton = document.querySelector('.btn__next');
+const $tutorialSteps = document.querySelector('.tutorial__steps');
 let stepNumber = 0;
 let usernameValue = '';
 
@@ -34,26 +46,45 @@ const updateUserInterface = () => {
   if (stepNumber === 0) {
     /* hideGame(); */
     $tutorialIntroContainer.style.display = 'flex';
+    $tutorialPanel.style.backgroundImage = 'url(./assets/introsimpsons.png)';
+    $tutorialPanel.style.backgroundRepeat = 'no-repeat';
+    $tutorialPanel.style.backgroundSize = '70%';
+    $tutorialPanel.style.backgroundPosition = 'bottom 80% left 10%';
     $usernameContainer.style.display = 'none';
     $tutorailConnectContainer.style.display = 'none';
     $tutorialTutorialContainer.style.display = 'none';
     $gameContainer.style.display = 'none';
+    $tutorialSteps.classList.add('visibility');
     $backButton.classList.add('visibility');
     $nextButton.textContent = "Let's begin!";
+    $nextButton.classList.add('btn__next--animate');
+    $nextButton.addEventListener('mouseenter', () => {
+      $nextButton.style.animationPlayState = 'paused';
+    });
+    $nextButton.addEventListener('mouseleave', () => {
+      $nextButton.style.animationPlayState = 'running';
+    });
   } else if (stepNumber === 1) {
+    $tutorialPanel.style.backgroundImage = 'none';
     $tutorialIntroContainer.style.display = 'none';
     $usernameContainer.style.display = 'flex';
-    $nextButton.addEventListener('click', (event) => {
-      handleSubmitName(event);
-    });
-    handleSubmitName();
-    console.log('update and handle name here');
     $tutorailConnectContainer.style.display = 'none';
     $tutorialTutorialContainer.style.display = 'none';
     $gameContainer.style.display = 'none';
+    $tutorialSteps.classList.remove('visibility');
+    $tutorialSteps.textContent = '1/3';
     $backButton.classList.remove('visibility');
     $nextButton.textContent = 'Continue';
+    $nextButton.classList.remove('btn__next--animate');
+    $nextButton.addEventListener('click', (event) => {
+      handleSubmitName(event);
+    });
   } else if (stepNumber === 2) {
+    $tutorialIntroContainer.style.display = 'flex';
+    $tutorialPanel.style.backgroundImage = 'url(./assets/cat.png)';
+    $tutorialPanel.style.backgroundRepeat = 'no-repeat';
+    $tutorialPanel.style.backgroundSize = '50%';
+    $tutorialPanel.style.backgroundPosition = 'bottom 50% left 10%';
     $tutorialIntroContainer.style.display = 'none';
     $usernameContainer.style.display = 'none';
     $tutorailConnectContainer.style.display = 'flex';
@@ -61,7 +92,9 @@ const updateUserInterface = () => {
     $gameContainer.style.display = 'none';
     /*  $backButton.classList.remove('visibility'); */
     $nextButton.textContent = 'Continue';
+    $tutorialSteps.textContent = '2/3';
   } else if (stepNumber === 3) {
+    $tutorialPanel.style.backgroundImage = 'none';
     $tutorialIntroContainer.style.display = 'none';
     $usernameContainer.style.display = 'none';
     $tutorailConnectContainer.style.display = 'none';
@@ -70,6 +103,7 @@ const updateUserInterface = () => {
     /*   $backButton.classList.remove('visibility'); */
     $nextButton.textContent = 'Start Quiz';
     $nextButton.style.backgroundColor = '#fbd239';
+    $tutorialSteps.textContent = '3/3';
   } else if (stepNumber === 4) {
     $tutorialContainer.style.display = 'none';
     $gameContainer.style.display = 'flex';
@@ -95,7 +129,7 @@ $backButton.addEventListener('click', () => {
 // Initial setup
 updateUserInterface();
 /*=======================================
-          1. Start Game 
+          2. Start Game 
     =========================================*/
 
 const $video = document.getElementById('myVideo');
@@ -140,7 +174,7 @@ const $finalRemoteText = document.querySelector('.result__final');
 
 //arduino starts here
 /*=======================================
-          1. Arduino 
+          3. Arduino 
     =========================================*/
 const hasWebSerial = 'serial' in navigator;
 let isConnected = false; // state of the serial connection to the Arduino
@@ -189,14 +223,23 @@ const updateArduino = (/*port*/) => {
 };
 
 let startTime;
+let countdownInterval;
 
+/* ----------- PING DISTANCE SENSOR ------- */
 const getTime = () => {
   let newDate = new Date();
   return newDate.getSeconds();
 };
 
+const resetTimer = () => {
+  clearInterval(countdownInterval);
+  countdownInterval = null;
+};
+
 const setTime = () => {
+  /*  resetTimer();  */ //reset timer
   startTime = getTime();
+  /* countdownInterval = setInterval(checkTime, 1000); // Update timer display every second */
 };
 
 /* const displayCheckTime = () => {
@@ -215,11 +258,16 @@ const checkTime = () => {
   console.log(timer - difference);
 
   //display timer
-  const displayCountdownTimer = timer - difference;
-  document.getElementById('countdown__display').textContent =
-    displayCountdownTimer; //difference; //display countdown
+  const displayTimeRemaining = timer - difference;
 
-  return isReady;
+  const displayCountdownContainer = document
+    .querySelector('.countdown__countainer')
+    .classList.remove('visibility');
+  document.getElementById('countdown__display').textContent =
+    displayTimeRemaining; //difference; //display countdown
+
+  //return isReady;
+  return displayTimeRemaining <= 0;
 
   //if (isReady && difference < timer + 1) {
   //  return true;
@@ -270,10 +318,6 @@ const receiveDataFromArduino = async (port) => {
           hoverAnswer(parsedJson);
           if (checkTime()) {
             processAnswer(parsedJson);
-            //display timer
-            const displayCountdownContainer = document
-              .querySelector('.countdown__countainer')
-              .classList.remove('visibility');
           }
           console.log(parsedJson);
         } catch (e) {
@@ -290,7 +334,7 @@ const receiveDataFromArduino = async (port) => {
 
 const hoverAnswer = (json) => {
   const selectedColor = '#fbd239';
-  const baseColor = '#059a93';
+  const baseColor = '#DE5893'; //#059a93 blue
 
   if (json.sensor === 'ping') {
     if (json.buttonUp) {
@@ -311,7 +355,7 @@ const hoverAnswer = (json) => {
 };
 
 const processAnswer = (json) => {
-  const baseColor = '#059a93';
+  const baseColor = '#DE5893'; //#059a93 blue
   const selectedColor = '#fbd239';
   console.log(json);
   if (json.sensor === 'ping') {
@@ -329,6 +373,8 @@ const processAnswer = (json) => {
 // Global variables to store the current hover status
 //let isButtonUpHovered = false;
 //let isButtonDownHovered = false;
+
+/* ----------- SERVO SENSOR ------- */
 
 //Json data from arduino -> process it and update UI (called in receiveDataFromArduino)
 const processJson = (json) => {
@@ -407,7 +453,7 @@ const displayConnectionState = () => {
 };
 
 /*=======================================
-          2. QUIZ LOGIC 
+          4. QUIZ LOGIC 
     =========================================*/
 
 let storeAnswersArray = [];
@@ -599,10 +645,9 @@ const $nameError = $screenName.querySelector('.error');
 
 const handleSubmitName = (event) => {
   const $nameInput = document.getElementById('nameInput');
-
+  event.preventDefault();
   console.log($nameInput.value);
   if ($nameInput.value) {
-    event.preventDefault();
     socket.emit('name', $nameInput.value);
     console.log('handleSubmitName works');
     console.log('handleSubmitName:', $nameInput.value);
@@ -758,7 +803,7 @@ const updatePeerList = (clients) => {
   console.log('ARRAY OF CLIENTS', clients);
 
   $otherSocketIds.innerHTML =
-    '<option value="none">--- Select Peer To Call ---</option>';
+    '<option value="none">--- Select Friend To Call ---</option>';
   for (const otherSocketId in clients) {
     //const isMyOwnId = (clientId === socket.id);
     if (clients.hasOwnProperty(otherSocketId)) {

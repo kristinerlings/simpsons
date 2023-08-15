@@ -14,13 +14,16 @@
   <div class="tutorial__container">
     <div class="tutorial__panel">
       <div class="tutorial__intro__container">
-        <h2>Which Simpsons do you resemble?</h2>
-        <p>Answer the quiz to find out</p>
+        <h1>Which Simpsons do you resemble?</h1>
+        <p>Answer the quiz to find out!</p>
+
+
       </div>
       <div class="tutorial__username__container">
-        <h2>Tell us a little bit about you</h2>
+        <h2>Tell us a little bit about yourself</h2>
         <p>What is your name? <span class="optional">*Optional</span></p>
         <form id="nameForm" method="post" action="">
+          <label for="nameInput" class="hidden">Name:</label>
           <input id="nameInput" type="text" name="nameInput" placeholder="username">
           <!-- <button type="submit">Submit Name</button>
           <span class="error"></span>-->
@@ -30,20 +33,20 @@
         <div class="start__connect">
           <h2>Let's make it more fun</h2>
           <p>Select a friend to connect with</p>
-          <label for="otherSocketIds">Peer: </label>
+          <label for="otherSocketIds">Friend: </label>
           <select id="otherSocketIds"></select>
-          <p class="connect--optional">*Optional - leave it blank to play by yourself</p>
+          <p class="connect--optional">*Optional - leave it blank to take quiz by yourself</p>
         </div>
       </div>
       <div class="tutorial__tutorial__container">
         <h2>How to play with Arduino</h2>
         <img class="tutorial__img" src="./assets/hand.png" alt="simpson hand" width="80px">
-        <p>Place an item close to the Arduino sensor to select either<br><span class="tutorial--down">button down</span>
-          or <span class="tutorial--up">button
-            up</span></p>
+        <p>Place an item close to the Arduino sensor <br>to select either button<span class="tutorial--down">down</span>
+          or <span class="tutorial--up">up</span></p>
       </div>
       <div class="tutorial__buttons">
         <button class="btn__back visibility">Back</button>
+        <p class="tutorial__steps visibility"></p>
         <button class="btn__next">Continue</button> <!-- onclick="updateUserInterface()"-->
       </div>
     </div>
