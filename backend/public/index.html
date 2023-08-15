@@ -7,19 +7,24 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="https://use.typekit.net/cry8nyb.css">
-  <title>Which Simposns are you?</title>
+  <title>Which Simpsons are you?</title>
 </head>
 
 <body class="body"> <!-- call function   onload=" hideGame()"-->
   <div class="tutorial__container">
     <div class="tutorial__panel">
+      <div class="tutorial__intro__container">
+        <h2>Which Simpsons do you resemble?</h2>
+        <p>Answer the quiz to find out</p>
+      </div>
       <div class="tutorial__username__container">
-        <h2>Write your name here</h2>
-        <!--<form id="nameForm" method="post" action="">-->
-        <input id="nameInput" type="text" name="nameInput" placeholder="username">
-        <!-- <button type="submit">Submit Name</button>
+        <h2>Tell us a little bit about you</h2>
+        <p>What is your name? <span class="optional">*Optional</span></p>
+        <form id="nameForm" method="post" action="">
+          <input id="nameInput" type="text" name="nameInput" placeholder="username">
+          <!-- <button type="submit">Submit Name</button>
           <span class="error"></span>-->
-        <!-- </form>-->
+        </form>
       </div>
       <div class="tutorial__connect__container">
         <div class="start__connect">
@@ -27,16 +32,20 @@
           <p>Select a friend to connect with</p>
           <label for="otherSocketIds">Peer: </label>
           <select id="otherSocketIds"></select>
+          <p class="connect--optional">*Optional - leave it blank to play by yourself</p>
         </div>
       </div>
       <div class="tutorial__tutorial__container">
-        <h2>How to play</h2>
+        <h2>How to play with Arduino</h2>
         <img class="tutorial__img" src="./assets/hand.png" alt="simpson hand" width="80px">
-        <p>Get your hands close to the sensor to raise your hand up</p>
-        <p></p>
+        <p>Place an item close to the Arduino sensor to select either<br><span class="tutorial--down">button down</span>
+          or <span class="tutorial--up">button
+            up</span></p>
       </div>
-
-      <button onclick="setUserConfiguration()" class="btn__next">Next</button> <!-- because I only have one function to exicute = onclick -->
+      <div class="tutorial__buttons">
+        <button class="btn__back visibility">Back</button>
+        <button class="btn__next">Continue</button> <!-- onclick="updateUserInterface()"-->
+      </div>
     </div>
   </div>
 
@@ -93,7 +102,7 @@
         <h2 class="hidden">User Scores</h2>
         <!--  <img class="user__img" src="./assets/homer.png"> -->
         <ul class="user__scores">
-          <li>Other user:</li>
+          <li class="scores__other--user">Other user:</li>
           <li><img src="./assets/icon-dark-f.svg" alt="icon marge" width="33" height="33"></li>
           <li class="user__score--marge">0</li>
           <li><img src="./assets/icon-dark-m.svg" alt="icon homer" width="40" height="40"></li>
@@ -123,8 +132,11 @@
                 <li id="optionOne" class="option__a"></li>
                 <li id="optionTwo" class="option__b"></li>
               </ul>
+              <div class="countdown__countainer visibility">
+                <h4 class="countdown__title">Select answer in:&nbsp;</h4>
+                <p id="countdown__display" class="countdown__number">0</p>
+              </div>
             </section>
-
 
             <!-- my local score count -->
             <div class="questions__scoreboard">
@@ -139,10 +151,7 @@
                 <li class="score indoor" id="indoorScore">0</li>
               </ul>
             </div>
-            <div class="countdown__countainer">
-              <h3 class="countdown__title">Countdown</h3>
-              <p id="countdown__display" class="countdown__number">0</p>
-            </div>
+
           </div>
 
           <h3 class="result__title"></h3>
@@ -183,7 +192,6 @@
     </section><!-- Close container__questions-->
 
   </div><!--  close container__page-->
-
 
 
   <script src="/socket.io/socket.io.js"></script>

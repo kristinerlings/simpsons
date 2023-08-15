@@ -4,50 +4,96 @@
 
 const $tutorialContainer = document.querySelector('.tutorial__container');
 const $gameContainer = document.getElementById('game__container');
-
-const hideGame = () => {
-  $tutorialContainer.style.display = 'flex';
-  $gameContainer.style.display = 'none';
-};
-
+const $backButton = document.querySelector('.btn__back');
+const $tutorialIntroContainer = document.querySelector(
+  '.tutorial__intro__container'
+);
+const $tutorailConnectContainer = document.querySelector(
+  '.tutorial__connect__container'
+);
+const $tutorialTutorialContainer = document.querySelector(
+  '.tutorial__tutorial__container'
+);
+const $usernameContainer = document.querySelector(
+  '.tutorial__username__container'
+);
+const $username = document.getElementById('nameInput');
+const $nextButton = document.querySelector('.btn__next');
 let stepNumber = 0;
 let usernameValue = '';
 
-const setUserConfiguration = () => {
-  const $username = document.getElementById('nameInput');
-  const $usernameContainer = document.querySelector(
-    '.tutorial__username__container'
-  );
-  const $tutorailConnectContainer = document.querySelector(
-    '.tutorial__connect__container'
-  );
-  const $tutorialTutorialContainer = document.querySelector(
-    '.tutorial__tutorial__container'
-  );
+/* const hideGame = () => {
+  $tutorialContainer.style.display = 'flex';
+  $tutorialIntroContainer.style.display = 'none';
+  $gameContainer.style.display = 'none';
+  $tutorailConnectContainer.style.display = 'none';
+  $tutorialTutorialContainer.style.display = 'none';
+}; */
 
+const updateUserInterface = () => {
   if (stepNumber === 0) {
-    usernameValue = $username.value;
-    stepNumber++;
+    /* hideGame(); */
+    $tutorialIntroContainer.style.display = 'flex';
+    $usernameContainer.style.display = 'none';
     $tutorailConnectContainer.style.display = 'none';
     $tutorialTutorialContainer.style.display = 'none';
-    $usernameContainer.style.display = 'flex';
-    handleSubmitName();
+    $gameContainer.style.display = 'none';
+    $backButton.classList.add('visibility');
+    $nextButton.textContent = "Let's begin!";
   } else if (stepNumber === 1) {
-    stepNumber++;
+    $tutorialIntroContainer.style.display = 'none';
+    $usernameContainer.style.display = 'flex';
+    $nextButton.addEventListener('click', (event) => {
+      handleSubmitName(event);
+    });
+    handleSubmitName();
+    console.log('update and handle name here');
+    $tutorailConnectContainer.style.display = 'none';
+    $tutorialTutorialContainer.style.display = 'none';
+    $gameContainer.style.display = 'none';
+    $backButton.classList.remove('visibility');
+    $nextButton.textContent = 'Continue';
+  } else if (stepNumber === 2) {
+    $tutorialIntroContainer.style.display = 'none';
+    $usernameContainer.style.display = 'none';
     $tutorailConnectContainer.style.display = 'flex';
     $tutorialTutorialContainer.style.display = 'none';
+    $gameContainer.style.display = 'none';
+    /*  $backButton.classList.remove('visibility'); */
+    $nextButton.textContent = 'Continue';
+  } else if (stepNumber === 3) {
+    $tutorialIntroContainer.style.display = 'none';
     $usernameContainer.style.display = 'none';
-  } else if (stepNumber === 2) {
-    stepNumber++;
     $tutorailConnectContainer.style.display = 'none';
     $tutorialTutorialContainer.style.display = 'flex';
-    $usernameContainer.style.display = 'none';
-  } else {
+    $gameContainer.style.display = 'none';
+    /*   $backButton.classList.remove('visibility'); */
+    $nextButton.textContent = 'Start Quiz';
+    $nextButton.style.backgroundColor = '#fbd239';
+  } else if (stepNumber === 4) {
     $tutorialContainer.style.display = 'none';
     $gameContainer.style.display = 'flex';
   }
 };
 
+// Next button click event
+$nextButton.addEventListener('click', () => {
+  if (stepNumber < 4) {
+    stepNumber++;
+    updateUserInterface();
+  }
+});
+
+// Back button click event
+$backButton.addEventListener('click', () => {
+  if (stepNumber > 0) {
+    stepNumber--;
+    updateUserInterface();
+  }
+});
+
+// Initial setup
+updateUserInterface();
 /*=======================================
           1. Start Game 
     =========================================*/
@@ -153,14 +199,25 @@ const setTime = () => {
   startTime = getTime();
 };
 
+/* const displayCheckTime = () => {
+  if (isReady && difference < timer + 1) {
+  //  return true;
+  //}
+  return Math.abs(Math.abs(startTime - 60) - currentTime) > timer;
+}; */
+
 const checkTime = () => {
   const currentTime = getTime();
-  const timer = 6; //delay of 4
+  const timer = 4; //delay of 4
   const difference = Math.abs(currentTime - startTime);
   const isReady = difference > timer;
   // Use this log as an example for the timer
   console.log(timer - difference);
-  document.getElementById('countdown__display').textContent = difference; //display countdown
+
+  //display timer
+  const displayCountdownTimer = timer - difference;
+  document.getElementById('countdown__display').textContent =
+    displayCountdownTimer; //difference; //display countdown
 
   return isReady;
 
@@ -213,6 +270,10 @@ const receiveDataFromArduino = async (port) => {
           hoverAnswer(parsedJson);
           if (checkTime()) {
             processAnswer(parsedJson);
+            //display timer
+            const displayCountdownContainer = document
+              .querySelector('.countdown__countainer')
+              .classList.remove('visibility');
           }
           console.log(parsedJson);
         } catch (e) {
@@ -444,7 +505,7 @@ const calculateScores = async (selectedAnswer) => {
   try {
     updateArduino();
   } catch (error) {
-    console.log('arduino error', error);
+    //console.log('arduino error', error);
   }
 };
 
@@ -533,31 +594,43 @@ const displayScores = () => {
 
 const $screenName = document.querySelector('.start__name');
 const $nameForm = document.getElementById('nameForm');
-const $nameInput = document.getElementById('nameInput');
+
 const $nameError = $screenName.querySelector('.error');
 
 const handleSubmitName = (event) => {
-  // event.preventDefault();
+  const $nameInput = document.getElementById('nameInput');
+
+  console.log($nameInput.value);
   if ($nameInput.value) {
+    event.preventDefault();
     socket.emit('name', $nameInput.value);
+    console.log('handleSubmitName works');
+    console.log('handleSubmitName:', $nameInput.value);
   }
 };
+
 //If I'm going to have multiple screens = good idea to have generic function that receives elements to show
 const showScreen = ($screen) => {
   $screenName.classList.toggle('screen--visible', $screen === $screenName);
 };
 
 const init = async () => {
-  myStream = await navigator.mediaDevices.getUserMedia({
-    audio: false,
-    video: true,
-  });
-  $video.srcObject = myStream;
+  try {
+    myStream = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: true,
+    });
+    $video.srcObject = myStream;
+
+    $otherSocketIds.addEventListener('input', callSelectedPeer);
+    $video.onloadedmetadata = () => $video.play();
+  } catch (error) {
+    console.log(error);
+    $video.style.backgroundColor = 'white';
+    $video.style.backgroundImage = 'url(./assets/doughnut.png)';
+    $video.style.backgroundRepeat = 'no-repeat';
+  }
   initSocket();
-
-  $otherSocketIds.addEventListener('input', callSelectedPeer);
-  $video.onloadedmetadata = () => $video.play();
-
   /* ---------   ARDUINO   --------- */
   displaySupportedState();
   if (!hasWebSerial) return;
@@ -604,9 +677,6 @@ const init = async () => {
   $connectButton.addEventListener('click', handleClickConnect);
   /*ARDUINO STOPS HERE */
 
-  //onboarding
-  setUserConfiguration();
-
   /* ========  QUIZ STARTS HERE ========  */
 
   displayScores(); //update score
@@ -621,10 +691,10 @@ const init = async () => {
   // usersScoreList(); //update user score list
 };
 
-const socketURL = 'http://localhost:8443';
+const socketURL = '/';
 
 const initSocket = () => {
-  socket = io.connect('/');
+  socket = io.connect(socketURL);
 
   socket.on('connect', () => {
     console.log(socket.id);
@@ -641,6 +711,9 @@ const initSocket = () => {
     if (signal.type === 'offer' && !peer) {
       await handlePeerOffer(myId, signal, peerId);
     }
+    /* document.querySelector('.scores__other--user').innerHTML =
+      'TESTING KRISTIN'; */
+
     peer.signal(signal);
   });
 
@@ -649,11 +722,17 @@ const initSocket = () => {
     if (peer) {
       peer.destroy();
       peer = null;
+      window.alert(
+        'Oh no your friend has left!  You can still continue without him, or refresh to connect with a new friend. '
+      );
+      $userContainer.classList.add('visibility');
     }
   });
 
-  socket.on('name', (client) => {
-    console.log('you are now named', client.name);
+  socket.on('name', (clients) => {
+    console.log('you are now named', clients);
+    updatePeerList(clients);
+
     //$screenName.classList.remove('screen--visible');
     // showScreen($screenName);
   });
@@ -676,8 +755,7 @@ const initSocket = () => {
 // });
 
 const updatePeerList = (clients) => {
-  console.log(clients);
-  console.log(clients.name);
+  console.log('ARRAY OF CLIENTS', clients);
 
   $otherSocketIds.innerHTML =
     '<option value="none">--- Select Peer To Call ---</option>';
@@ -688,6 +766,11 @@ const updatePeerList = (clients) => {
       if (otherClient.id !== socket.id) {
         const $option = document.createElement('option');
         $option.value = otherClient.id;
+        /*         if (!otherClient.name == '') {
+          $option.textContent = otherClient.name;
+        } else {
+          $option.textContent = otherClient.id;
+        } */
         $option.textContent = otherClient.name || otherClient.id;
         $otherSocketIds.appendChild($option);
       }
@@ -699,7 +782,18 @@ const callSelectedPeer = () => {
   if ($otherSocketIds.value === '') {
     return;
   }
+
   console.log(`Call the selected peer: ${$otherSocketIds.value} `);
+  /*    if (peer) {
+    //if peer exists, send the name to the other peer
+    const data = {
+      type: 'updateName',
+      name: $otherSocketIds.name,
+    };
+    peer.send(JSON.stringify(data)); 
+    console.log('SEND DATA', data);
+  }  */
+
   callPeer($otherSocketIds.value);
 };
 
@@ -713,10 +807,12 @@ const callPeer = async (peerId) => {
       channelName: 'data',
     },
   });
-
+  console.log('PEER:', peer);
   connectedPeerId = peerId;
   peer.on('signal', (signal) => {
     socket.emit('signal', peerId, signal);
+    //document.querySelector('.scores__other--user').innerHTML = peerId;
+    console.log("I'm sending a signal to " + peerId);
   });
   peer.on('stream', (stream) => {
     $otherVideo.srcObject = stream;
@@ -739,8 +835,8 @@ const callPeer = async (peerId) => {
       Data => Callee receives from receiver*/
   peer.on('connect', () => {
     //peer.send('hello threre!');
-    console.log('hello'); //see this on callee side
-
+    console.log('hello its me from the sender'); //see this on callee side
+    //document.querySelector('.scores__other--user').innerHTML = peerId; //works only ID and if you are the caller
     $userContainer.classList.remove('visibility');
     //send the name? -> callee receives the receivers name and displays it along with score count on the screen
   });
@@ -768,6 +864,14 @@ const callPeer = async (peerId) => {
 
         console.log('show result marge works');
         console.log(data);
+      } else if (data.type === 'updateName') {
+        console.log(data.name, 'receive name from other peer on caller side');
+        const otherUserName = data.name; // Extract the received name
+        const $otherUserElement = document.querySelector(
+          '.scores__other--user'
+        );
+        $otherUserElement.innerHTML = otherUserName;
+        /* $nameUserMarge.innerHTML = data.name; */
       }
     } catch (e) {
       console.log(e);
@@ -804,6 +908,7 @@ const handlePeerOffer = async (myPeerId, offer, peerId) => {
 
   peer.on('connect', () => {
     $userContainer.classList.remove('visibility');
+    console.log('hello its me from the receiver', peerId);
   });
 
   /*could update css here for the receiver side - on connect, execute*/
@@ -836,9 +941,15 @@ const handlePeerOffer = async (myPeerId, offer, peerId) => {
           'finalImgExternal'
         ).alt = `${data.result} Simpsons`;
         $otherVideo.classList.remove('hidden');
-
-        console.log('show result marge works');
         console.log(data);
+      } else if (data.type === 'updateName') {
+        console.log('update name works on receiver side');
+        const otherUserName = data.name; // Extract the received name
+        const $otherUserElement = document.querySelector(
+          '.scores__other--user'
+        );
+        $otherUserElement.innerHTML = otherUserName;
+        /* $usernameRemote.textContent = data.name; */
       }
     } catch (e) {
       console.log(e);

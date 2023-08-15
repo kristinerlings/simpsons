@@ -51,11 +51,11 @@ io.on('connection', (socket) => {
 
     //validation -> check the length
     name = name.trim();
-    if (name.length === 0) {
+/*     if (name.length === 0) {
       //this one does not work? .. the other errror messages work, meaning client side is ok!
-      socket.emit('name-error', 'please enter a name');
+      io.to(peerId).emit('name-error', 'please enter a name');
       return;
-    }
+    } */
 
     //validation -> check if anyone else has the same name
     let nameInUse = false;
@@ -74,9 +74,10 @@ io.on('connection', (socket) => {
     }
 
     //add the name to the name porperty (collect it)
+    console.log(clients);
     clients[socket.id].name = name;
-
+    console.log(clients);
     //validation2 framhald-> send back the same name event
-    socket.emit('name', clients[socket.id]);
+    io.emit('name', clients);
   });
 });

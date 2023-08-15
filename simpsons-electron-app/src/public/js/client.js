@@ -1,4 +1,51 @@
 /*=======================================
+          1. Onboarding
+    =========================================*/
+
+const $tutorialContainer = document.querySelector('.tutorial__container');
+const $gameContainer = document.getElementById('game__container');
+const $tutorailConnectContainer = document.querySelector(
+  '.tutorial__connect__container'
+);
+const $tutorialTutorialContainer = document.querySelector(
+  '.tutorial__tutorial__container'
+);
+let stepNumber = 0;
+let usernameValue = '';
+
+const hideGame = () => {
+  $tutorialContainer.style.display = 'flex';
+  $gameContainer.style.display = 'none';
+  $tutorailConnectContainer.style.display = 'none';
+  $tutorialTutorialContainer.style.display = 'none';
+};
+
+const setUserConfiguration = () => {
+  const $username = document.getElementById('nameInput');
+  const $usernameContainer = document.querySelector(
+    '.tutorial__username__container'
+  );
+
+  if (stepNumber === 0) {
+    $usernameContainer.style.display = 'flex';
+    console.log('working username');
+    handleSubmitName();
+    stepNumber++;
+    $tutorailConnectContainer.style.display = 'flex';
+    $tutorialTutorialContainer.style.display = 'none';
+    $usernameContainer.style.display = 'none';
+  } else if (stepNumber === 1) {
+    stepNumber++;
+    $tutorailConnectContainer.style.display = 'none';
+    $tutorialTutorialContainer.style.display = 'flex';
+    $usernameContainer.style.display = 'none';
+  } else {
+    $tutorialContainer.style.display = 'none';
+    $gameContainer.style.display = 'flex';
+  }
+};
+
+/*=======================================
           1. Start Game 
     =========================================*/
 
@@ -394,7 +441,7 @@ const calculateScores = async (selectedAnswer) => {
   try {
     updateArduino();
   } catch (error) {
-    console.log('arduino error', error);
+    //console.log('arduino error', error);
   }
 };
 
@@ -494,6 +541,8 @@ const handleSubmitName = (event) => {
     socket.emit('name', $nameInput.value);
     console.log('handleSubmitName works');
   }
+
+
 };
 
 //If I'm going to have multiple screens = good idea to have generic function that receives elements to show
@@ -502,16 +551,22 @@ const showScreen = ($screen) => {
 };
 
 const init = async () => {
-  myStream = await navigator.mediaDevices.getUserMedia({
-    audio: false,
-    video: true,
-  });
-  $video.srcObject = myStream;
+  try {
+    myStream = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: true,
+    });
+    $video.srcObject = myStream;
+
+    $otherSocketIds.addEventListener('input', callSelectedPeer);
+    $video.onloadedmetadata = () => $video.play();
+  } catch (error) {
+    console.log(error);
+    $video.style.backgroundColor = 'white';
+    $video.style.backgroundImage = 'url(./assets/doughnut.png)';
+    $video.style.backgroundRepeat = 'no-repeat';
+  }
   initSocket();
-
-  $otherSocketIds.addEventListener('input', callSelectedPeer);
-  $video.onloadedmetadata = () => $video.play();
-
   /* ---------   ARDUINO   --------- */
   displaySupportedState();
   if (!hasWebSerial) return;
@@ -600,11 +655,26 @@ const initSocket = () => {
     if (peer) {
       peer.destroy();
       peer = null;
+      window.alert(
+        'Oh no your friend has left!  You can still continue without him, or refresh to connect with a new friend. '
+      );
+      $userContainer.classList.add('visibility');
     }
   });
 
-  socket.on('name', (client) => {
-    console.log('you are now named', client.name);
+  socket.on('name', (clients) => {
+    console.log('you are now named', clients);
+    updatePeerList(clients);
+
+    /*     if (peer) {
+      //if peer exists, send the name to the other peer
+      const data = {
+        type: 'updateName',
+        name: client.name,
+      };
+      peer.send(JSON.stringify(data));
+      console.log(peer, 'peer works' + data);
+    } */
 
     //$screenName.classList.remove('screen--visible');
     // showScreen($screenName);
@@ -628,8 +698,7 @@ const initSocket = () => {
 // });
 
 const updatePeerList = (clients) => {
-  console.log(clients);
-  console.log(clients.name);
+  console.log('ARRAY OF CLIENTS', clients);
 
   $otherSocketIds.innerHTML =
     '<option value="none">--- Select Peer To Call ---</option>';
@@ -640,6 +709,11 @@ const updatePeerList = (clients) => {
       if (otherClient.id !== socket.id) {
         const $option = document.createElement('option');
         $option.value = otherClient.id;
+        /*         if (!otherClient.name == '') {
+          $option.textContent = otherClient.name;
+        } else {
+          $option.textContent = otherClient.id;
+        } */
         $option.textContent = otherClient.name || otherClient.id;
         $otherSocketIds.appendChild($option);
       }
@@ -652,7 +726,16 @@ const callSelectedPeer = () => {
     return;
   }
   console.log(`Call the selected peer: ${$otherSocketIds.value} `);
+
   callPeer($otherSocketIds.value);
+  /* if (peer) {
+    const data = {
+      type: 'updateName',
+      name: $otherSocketIds.value.name,
+    };
+    peer.send(JSON.stringify(data));
+    console.log('sent the name to the other peer');
+  } */
 };
 
 const callPeer = async (peerId) => {
@@ -720,6 +803,10 @@ const callPeer = async (peerId) => {
 
         console.log('show result marge works');
         console.log(data);
+      } else if (data.type === 'updateName') {
+        console.log(data.name);
+        document.querySelector('.scores__other--user').innerHTML = data.name;
+        /* $nameUserMarge.innerHTML = data.name; */
       }
     } catch (e) {
       console.log(e);
@@ -788,9 +875,13 @@ const handlePeerOffer = async (myPeerId, offer, peerId) => {
           'finalImgExternal'
         ).alt = `${data.result} Simpsons`;
         $otherVideo.classList.remove('hidden');
-
-        console.log('show result marge works');
         console.log(data);
+      } else if (data.type === 'updateName') {
+        console.log('update name works');
+        console.log(data);
+        document.querySelector('.scores__other--user').innerHTML = data.name;
+        console.log('update name works', data.name);
+        /* $usernameRemote.textContent = data.name; */
       }
     } catch (e) {
       console.log(e);
@@ -799,50 +890,3 @@ const handlePeerOffer = async (myPeerId, offer, peerId) => {
 };
 
 init();
-
-/*=======================================
-          1. Onboarding
-    =========================================*/
-
-const $tutorialContainer = document.querySelector('.tutorial__container');
-const $gameContainer = document.getElementById('game__container');
-const $tutorailConnectContainer = document.querySelector(
-  '.tutorial__connect__container'
-);
-const $tutorialTutorialContainer = document.querySelector(
-  '.tutorial__tutorial__container'
-);
-let stepNumber = 0;
-let usernameValue = '';
-
-const hideGame = () => {
-  $tutorialContainer.style.display = 'flex';
-  $gameContainer.style.display = 'none';
-  $tutorailConnectContainer.style.display = 'none';
-  $tutorialTutorialContainer.style.display = 'none';
-};
-
-const setUserConfiguration = () => {
-  const $username = document.getElementById('nameInput');
-  const $usernameContainer = document.querySelector(
-    '.tutorial__username__container'
-  );
-
-  if (stepNumber === 0) {
-    $usernameContainer.style.display = 'flex';
-    console.log('working username');
-    handleSubmitName();
-    stepNumber++;
-    $tutorailConnectContainer.style.display = 'flex';
-    $tutorialTutorialContainer.style.display = 'none';
-    $usernameContainer.style.display = 'none';
-  } else if (stepNumber === 1) {
-    stepNumber++;
-    $tutorailConnectContainer.style.display = 'none';
-    $tutorialTutorialContainer.style.display = 'flex';
-    $usernameContainer.style.display = 'none';
-  } else {
-    $tutorialContainer.style.display = 'none';
-    $gameContainer.style.display = 'flex';
-  }
-};

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Tray } = require('electron');
+const { app, BrowserWindow, Tray, Menu, MenuItem } = require('electron');
 const path = require('path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -6,12 +6,16 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+let mainWindow;
+let appIcon;
+
 const createWindow = () => {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    icon: './public/assets/doughnut-icon.icns',
+    backgroundColor: '#45c6bc',
+    /* icon: './public/assets/doughnut-icon.icns', */
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
@@ -58,10 +62,135 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
   /* const appIcon = new Tray('/icon/assets/doughnut.png'); */
-  const appIcon = new Tray(
-   './public/assets/doughnut-icon.icns' );
+  /*   const appIcon = new Tray(
+   './public/assets/doughnut-icon.icns' ); */
+
+  //open tab window
+  const createTabWindow = () => {
+    const tabWindow = new BrowserWindow({
+      width: 400,
+      height: 300,
+      webPreferences: {
+        nodeIntegration: true,
+      },
+    });
+    tabWindow.loadFile(path.join(__dirname, './public/index.html'));
+  };
+
+  //submenu -> array -> each array can have array of submenus with label objects
+  //click: listen to click event on submenu
+  //type seperator: add horizontal line between the labels
+  //
+  const menuTemplate = [
+    {
+      label: app.name,
+      submenu: [
+/*         {
+          label: 'New Tab',
+          click: createTabWindow,
+        },
+        { type: 'separator' }, */
+      /*   {
+          label: 'New Window',
+          click: createWindow,
+        }, */
+        /*    {
+          label: 'Open with Chrome',
+          click: () => {
+            const { shell } = require('electron');
+            shell.openExternal('/');
+          },
+        }, */
+        {
+          role: 'Close',
+        },
+        { type: 'separator' },
+        { role: 'Quit' },
+      ],
+    },
+    {
+      label: 'File',
+      submenu: [
+      /*   {
+          label: 'New Tab',
+          click: createTabWindow,
+        }, */
+/*         { type: 'separator' }, */
+        {
+          label: 'New Window',
+          click: createWindow,
+        },
+        { label: 'Close Window', role: 'Close' },
+      ],
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        { role: 'undo' },
+        { role: 'redo' },
+        { type: 'separator' },
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+        { role: 'pasteAndMatchStyle' },
+        { role: 'delete' },
+        { role: 'selectAll' },
+      ],
+    },
+    {
+      label: 'View',
+      submenu: [
+        { role: 'reload' },
+        { role: 'forceReload' },
+        { type: 'separator' },
+        { role: 'toggleDevTools' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' },
+      ],
+    },
+  ];
+
+  const menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
+
+  //create Context Menu/(right click menu):
+  const contextMenuTemplate = [
+    { role: 'cut' },
+    { role: 'copy' },
+    { role: 'paste' },
+    { role: 'selectAll' },
+  ];
+
+  const contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
 
   createWindow();
+
+  mainWindow.webContents.on('context-menu', (event, params) => {
+    contextMenu.popup(mainWindow, params.x, params.y); //coordinates of where the mouse was right clicked
+  });
+  //need to attach this to the webcontext property of the browser window
+
+  // Create and show the tray icon
+  appIcon = new Tray(path.join(__dirname, './public/assets/doughnut-icon'));
+
+  // Define the context menu for the tray icon
+  const trayContextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Open App',
+      click: () => {
+        mainWindow.show(); // Show the main window when the menu item is clicked
+      },
+    },
+    {
+      label: 'Exit',
+      click: () => {
+        app.quit(); // Quit the application when the menu item is clicked
+      },
+    },
+  ]);
+
+  // Set the context menu for the tray icon
+  appIcon.setContextMenu(trayContextMenu);
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

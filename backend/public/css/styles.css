@@ -36,6 +36,7 @@ body {
   --color-blue: #059a93;
   --color-yellow: #fbd239;
   --color-black: #131313;
+  --color-pink: #DE5893;
 
   --color-orange: #ecd0a1;
   --color-white: #ededed;
@@ -179,10 +180,6 @@ ul {
   margin: 0 auto;
 }
 
-.questions__title {
-/*   grid-column: 2/3;
-  grid-row: 1/2; */
-}
 .container__users {
 /*   grid-column: 3/4;
   grid-row: 1/2; */
@@ -232,7 +229,7 @@ ul {
 
 .list__options {
   cursor: pointer;
-  margin: 0rem 2rem 4rem 0rem;
+  margin: 0rem 2rem 0rem 0rem;
 }
 
 .list__options > li {
@@ -330,9 +327,11 @@ ul {
 
 
 .questions__title {
-  font-size: 2.3rem; 
-  font-weight: 500;
+  font-size: 2.2rem; 
+  font-weight: 700;
   margin: 0rem 0rem 1rem;
+  text-align: center;
+  justify-self: center;
 }
 
 
@@ -403,38 +402,121 @@ ul {
  .tutorial__panel{
   display:flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   background-color: var(--color-white);
   border-radius: 10px;
   width: 40rem;
   height: 30rem;
+
  }
 
- .tutorial__username__container, .tutorial__connect__container, .tutorial__tutorial__container{
+ .tutorial__username__container, .tutorial__connect__container, .tutorial__tutorial__container, .tutorial__intro__container{
   display:flex;
   flex-direction: column; 
-  justify-content: center;
+  /* justify-content: center; */
+  padding-block-start: 2rem;
   align-items: center;
  }
 
-.btn__next{
-  margin-block: 2rem;
+ .tutorial__username__container > h2 {
+  text-align: center;
+  width: 70%;
+ }
+ 
+ .tutorial__intro__container{
+  padding-block-start: 6rem;
+ }
+
+ .tutorial__username__container{
+  padding-block-start: 4rem;
+ /*  background-image: url(../assets/couch.png);
+  background-size: cover;
+  background-position: center;
+  width:100%;
+  height: 100%; */
+ }
+.tutorial__connect__container{
+   padding-block-start: 5rem;
 }
 
 
-@keyframes handUp {
-  0% {
-    transform: translateY(0px);
+/*tutorial*/
+.tutorial__tutorial__container{
+background-image: url(../assets/arduino.png);
+background-position: center 40%;
+background-repeat: no-repeat;
+padding-block-start: 2rem;
+}
+
+.tutorial__tutorial__container > h2{
+  margin-block-start: 2rem;
+}
+
+.tutorial__tutorial__container > p{
+  text-align: center;
+  line-height: 2rem;
+}
+.tutorial__tutorial__container > p > span {
+/*   font-size: 1.1rem; */
+  margin: .5rem;
+  padding: .2rem 1rem;
+  background-color: var(--color-pink);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.tutorial__tutorial__container > p > span:hover{
+  background-color: var(--color-yellow);
+  font-weight: 600;
+}
+
+
+
+ @keyframes handUp {
+ 0% {
+    transform: translateX(-30px);
   }
   50% {
-    transform: translateY(-20px);
+    transform: translateX(30px);
   }
   100% {
-    transform: translateY(0px);
+    transform: translateX(-30px);
   }
-}
+} 
 
+@keyframes colorChangeUp {
+ 0% {
+    background-color: var(--color-yellow);
+  }
+  30% {
+   background-color: var(--color-yellow);
+  }
+  50% {
+   background-color: var(--color-pink);
+  }
+  100% {
+   background-color: var(--color-yellow);
+  }
+} 
+
+@keyframes colorChangeDown {
+ 0% {
+    background-color: var(--color-yellow);
+  }
+  70% {
+   background-color: var(--color-yellow);
+  }
+  90% {
+  background-color: var(--color-pink);
+  }
+  100%{
+    background-color: var(--color-yellow);
+  }
+} 
+
+
+ 
 
 @keyframes handDown {
   0% {
@@ -450,7 +532,77 @@ ul {
 
 
 .tutorial__img{
-  animation: handUp 1s ease-in-out infinite;
+  animation: handUp 5s ease-in-out infinite;
+  margin-block-start: 2rem;
+}
+
+.tutorial--up{
+  animation: colorChangeUp 5s ease-in-out infinite;
+}
+
+.tutorial--down{
+  animation: colorChangeDown 5s ease-in-out infinite;
 }
 
 
+.countdown__countainer{
+  font-size: 18px;
+  display:flex;
+  /* flex-direction: column; */
+  justify-content: center;
+  align-items: center;
+  margin: 0rem;
+  padding: 0rem;
+}
+
+.countdown__title{
+  font-size: 16px;
+  margin: 0rem;
+  padding: 0rem;
+  color: var(--color-white);
+}
+
+.countdown__number{
+  color: var(--color-yellow);
+}
+
+.connect--optional{
+  font-size: .8rem;
+  color: var(--color-pink);
+  font-style: italic;
+/*    margin-block-start: -0.01rem; */
+
+}
+
+
+
+.tutorial__buttons{
+  display:flex;
+  width: 100%;
+  justify-content: space-between;
+
+
+}
+.btn__next, .btn__back{
+  margin:2rem 2.5rem;
+  padding: .3rem 3rem;
+  border-radius: 4px;
+}
+
+.btn__next{
+  background-color: var(--color-yellow);
+}
+.btn__back{
+  background-color: var(--color-blue);
+}
+
+
+
+/**/
+.optional{
+  font-size: .8rem;
+  color: var(--color-pink);
+  font-style: italic;
+
+
+}
