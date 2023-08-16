@@ -1,52 +1,140 @@
+/*
+1. Onboarding
+2. Start Game
+3. Arduino
+  3.1. Ping Distance Sensor
+  3.2. Servo Motor
+4. Quiz Logic
+
+*/
+
 /*=======================================
           1. Onboarding
     =========================================*/
 
 const $tutorialContainer = document.querySelector('.tutorial__container');
+const $tutorialPanel = document.querySelector('.tutorial__panel');
 const $gameContainer = document.getElementById('game__container');
+const $backButton = document.querySelector('.btn__back');
+const $tutorialIntroContainer = document.querySelector(
+  '.tutorial__intro__container'
+);
 const $tutorailConnectContainer = document.querySelector(
   '.tutorial__connect__container'
 );
 const $tutorialTutorialContainer = document.querySelector(
   '.tutorial__tutorial__container'
 );
+const $usernameContainer = document.querySelector(
+  '.tutorial__username__container'
+);
+const $username = document.getElementById('nameInput');
+const $nextButton = document.querySelector('.btn__next');
+const $tutorialSteps = document.querySelector('.tutorial__steps');
+const $nameInput = document.getElementById('nameInput');
 let stepNumber = 0;
 let usernameValue = '';
 
-const hideGame = () => {
+/* const hideGame = () => {
   $tutorialContainer.style.display = 'flex';
+  $tutorialIntroContainer.style.display = 'none';
   $gameContainer.style.display = 'none';
   $tutorailConnectContainer.style.display = 'none';
   $tutorialTutorialContainer.style.display = 'none';
-};
+}; */
 
-const setUserConfiguration = () => {
-  const $username = document.getElementById('nameInput');
-  const $usernameContainer = document.querySelector(
-    '.tutorial__username__container'
-  );
-
+const updateUserInterface = () => {
   if (stepNumber === 0) {
+    /* hideGame(); */
+    $tutorialIntroContainer.style.display = 'flex';
+    $tutorialPanel.style.backgroundImage = 'url(./assets/introsimpsons.png)';
+    $tutorialPanel.style.backgroundRepeat = 'no-repeat';
+    $tutorialPanel.style.backgroundSize = '64%';
+    $tutorialPanel.style.backgroundPosition = 'bottom 83% left 10%';
+    $usernameContainer.style.display = 'none';
+    $tutorailConnectContainer.style.display = 'none';
+    $tutorialTutorialContainer.style.display = 'none';
+    $gameContainer.style.display = 'none';
+    $tutorialSteps.classList.add('visibility');
+    $backButton.classList.add('visibility');
+    $nextButton.textContent = "Let's begin!";
+    $nextButton.classList.add('btn__next--animate');
+    $nextButton.addEventListener('mouseenter', () => {
+      $nextButton.style.animationPlayState = 'paused';
+    });
+    $nextButton.addEventListener('mouseleave', () => {
+      $nextButton.style.animationPlayState = 'running';
+    });
+  } else if (stepNumber === 1) {
+    $tutorialPanel.style.backgroundImage = 'none';
+    $tutorialIntroContainer.style.display = 'none';
     $usernameContainer.style.display = 'flex';
-    console.log('working username');
-    handleSubmitName();
-    stepNumber++;
+    $tutorailConnectContainer.style.display = 'none';
+    $tutorialTutorialContainer.style.display = 'none';
+    $gameContainer.style.display = 'none';
+    $tutorialSteps.classList.remove('visibility');
+    $tutorialSteps.textContent = '1/3';
+    $backButton.classList.remove('visibility');
+    $nextButton.textContent = 'Continue';
+    $nextButton.classList.remove('btn__next--animate');
+    $nextButton.addEventListener('click', (event) => {
+      handleSubmitName(event);
+    });
+    $nameInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+      }
+    });
+  } else if (stepNumber === 2) {
+    $tutorialIntroContainer.style.display = 'flex';
+    $tutorialPanel.style.backgroundImage = 'url(./assets/cat.png)';
+    $tutorialPanel.style.backgroundRepeat = 'no-repeat';
+    $tutorialPanel.style.backgroundSize = '50%';
+    $tutorialPanel.style.backgroundPosition = 'bottom 50% left 10%';
+    $tutorialIntroContainer.style.display = 'none';
+    $usernameContainer.style.display = 'none';
     $tutorailConnectContainer.style.display = 'flex';
     $tutorialTutorialContainer.style.display = 'none';
+    $gameContainer.style.display = 'none';
+    /*  $backButton.classList.remove('visibility'); */
+    $nextButton.textContent = 'Continue';
+    $tutorialSteps.textContent = '2/3';
+  } else if (stepNumber === 3) {
+    $tutorialPanel.style.backgroundImage = 'none';
+    $tutorialIntroContainer.style.display = 'none';
     $usernameContainer.style.display = 'none';
-  } else if (stepNumber === 1) {
-    stepNumber++;
     $tutorailConnectContainer.style.display = 'none';
     $tutorialTutorialContainer.style.display = 'flex';
-    $usernameContainer.style.display = 'none';
-  } else {
+    $gameContainer.style.display = 'none';
+    /*   $backButton.classList.remove('visibility'); */
+    $nextButton.textContent = 'Start Quiz';
+    $nextButton.style.backgroundColor = '#fbd239';
+    $tutorialSteps.textContent = '3/3';
+  } else if (stepNumber === 4) {
     $tutorialContainer.style.display = 'none';
     $gameContainer.style.display = 'flex';
+    sendMyName();
   }
 };
 
+// Next button click event
+$nextButton.addEventListener('click', () => {
+  if (stepNumber < 4) {
+    stepNumber++;
+    updateUserInterface();
+  }
+});
+
+// Back button click event
+$backButton.addEventListener('click', () => {
+  if (stepNumber > 0) {
+    stepNumber--;
+    updateUserInterface();
+  }
+});
+
 /*=======================================
-          1. Start Game 
+          2. Start Game 
     =========================================*/
 
 const $video = document.getElementById('myVideo');
@@ -91,7 +179,7 @@ const $finalRemoteText = document.querySelector('.result__final');
 
 //arduino starts here
 /*=======================================
-          1. Arduino 
+          3. Arduino 
     =========================================*/
 const hasWebSerial = 'serial' in navigator;
 let isConnected = false; // state of the serial connection to the Arduino
@@ -140,26 +228,51 @@ const updateArduino = (/*port*/) => {
 };
 
 let startTime;
+let countdownInterval;
 
+/* ----------- PING DISTANCE SENSOR ------- */
 const getTime = () => {
   let newDate = new Date();
   return newDate.getSeconds();
 };
 
-const setTime = () => {
-  startTime = getTime();
+const resetTimer = () => {
+  clearInterval(countdownInterval);
+  countdownInterval = null;
 };
+
+const setTime = () => {
+  /*  resetTimer();  */ //reset timer
+  startTime = getTime();
+  /* countdownInterval = setInterval(checkTime, 1000); // Update timer display every second */
+};
+
+/* const displayCheckTime = () => {
+  if (isReady && difference < timer + 1) {
+  //  return true;
+  //}
+  return Math.abs(Math.abs(startTime - 60) - currentTime) > timer;
+}; */
 
 const checkTime = () => {
   const currentTime = getTime();
-  const timer = 6; //delay of 4
+  const timer = 4; //delay of 4
   const difference = Math.abs(currentTime - startTime);
   const isReady = difference > timer;
   // Use this log as an example for the timer
   console.log(timer - difference);
-  document.getElementById('countdown__display').textContent = difference; //display countdown
 
-  return isReady;
+  //display timer
+  const displayTimeRemaining = timer - difference;
+
+  const displayCountdownContainer = document
+    .querySelector('.countdown__countainer')
+    .classList.remove('visibility');
+  document.getElementById('countdown__display').textContent =
+    displayTimeRemaining; //difference; //display countdown
+
+  //return isReady;
+  return displayTimeRemaining <= 0;
 
   //if (isReady && difference < timer + 1) {
   //  return true;
@@ -226,7 +339,7 @@ const receiveDataFromArduino = async (port) => {
 
 const hoverAnswer = (json) => {
   const selectedColor = '#fbd239';
-  const baseColor = '#059a93';
+  const baseColor = '#DE5893'; //#059a93 blue
 
   if (json.sensor === 'ping') {
     if (json.buttonUp) {
@@ -247,7 +360,7 @@ const hoverAnswer = (json) => {
 };
 
 const processAnswer = (json) => {
-  const baseColor = '#059a93';
+  const baseColor = '#DE5893'; //#059a93 blue
   const selectedColor = '#fbd239';
   console.log(json);
   if (json.sensor === 'ping') {
@@ -265,6 +378,8 @@ const processAnswer = (json) => {
 // Global variables to store the current hover status
 //let isButtonUpHovered = false;
 //let isButtonDownHovered = false;
+
+/* ----------- SERVO SENSOR ------- */
 
 //Json data from arduino -> process it and update UI (called in receiveDataFromArduino)
 const processJson = (json) => {
@@ -343,7 +458,7 @@ const displayConnectionState = () => {
 };
 
 /*=======================================
-          2. QUIZ LOGIC 
+          4. QUIZ LOGIC 
     =========================================*/
 
 let storeAnswersArray = [];
@@ -457,6 +572,9 @@ const showFinalContainer = () => {
   $video.style.width = '35rem';
   $otherVideo.style.width = '35rem';
   document.querySelector('.video__container').style.width = '35rem';
+  document
+    .querySelector('.result__title')
+    .classList.add('result__title--friend'); //shitfix to adjust css for the final result
 
   // $img__simpsons.classList.add(`hidden`);
 
@@ -532,17 +650,26 @@ const $screenName = document.querySelector('.start__name');
 const $nameForm = document.getElementById('nameForm');
 
 const $nameError = $screenName.querySelector('.error');
+const $myName = document.querySelector('.video__myname');
 
 const handleSubmitName = (event) => {
-  const $nameInput = document.getElementById('nameInput');
-  // event.preventDefault();
+  event.preventDefault();
   console.log($nameInput.value);
   if ($nameInput.value) {
     socket.emit('name', $nameInput.value);
     console.log('handleSubmitName works');
+    console.log('handleSubmitName:', $nameInput.value);
+    $myName.innerHTML = $nameInput.value;
   }
+};
 
-
+const sendMyName = () => {
+  //pass on myName
+  const data = {
+    type: 'updateName',
+    name: $myName.innerHTML,
+  };
+  peer.send(JSON.stringify(data));
 };
 
 //If I'm going to have multiple screens = good idea to have generic function that receives elements to show
@@ -625,6 +752,9 @@ const init = async () => {
   console.log($chooseAnswerA, 'choose answer A works');
 
   // usersScoreList(); //update user score list
+
+  // Initial setup - Onboarding
+  updateUserInterface();
 };
 
 const socketURL = 'http://localhost:8443';
@@ -647,6 +777,9 @@ const initSocket = () => {
     if (signal.type === 'offer' && !peer) {
       await handlePeerOffer(myId, signal, peerId);
     }
+    /* document.querySelector('.scores__other--user').innerHTML =
+      'TESTING KRISTIN'; */
+
     peer.signal(signal);
   });
 
@@ -665,16 +798,6 @@ const initSocket = () => {
   socket.on('name', (clients) => {
     console.log('you are now named', clients);
     updatePeerList(clients);
-
-    /*     if (peer) {
-      //if peer exists, send the name to the other peer
-      const data = {
-        type: 'updateName',
-        name: client.name,
-      };
-      peer.send(JSON.stringify(data));
-      console.log(peer, 'peer works' + data);
-    } */
 
     //$screenName.classList.remove('screen--visible');
     // showScreen($screenName);
@@ -701,7 +824,7 @@ const updatePeerList = (clients) => {
   console.log('ARRAY OF CLIENTS', clients);
 
   $otherSocketIds.innerHTML =
-    '<option value="none">--- Select Peer To Call ---</option>';
+    '<option value="none">--- Select Friend To Call ---</option>';
   for (const otherSocketId in clients) {
     //const isMyOwnId = (clientId === socket.id);
     if (clients.hasOwnProperty(otherSocketId)) {
@@ -725,17 +848,19 @@ const callSelectedPeer = () => {
   if ($otherSocketIds.value === '') {
     return;
   }
-  console.log(`Call the selected peer: ${$otherSocketIds.value} `);
 
-  callPeer($otherSocketIds.value);
-  /* if (peer) {
+  console.log(`Call the selected peer: ${$otherSocketIds.value} `);
+  /*    if (peer) {
+    //if peer exists, send the name to the other peer
     const data = {
       type: 'updateName',
-      name: $otherSocketIds.value.name,
+      name: $otherSocketIds.name,
     };
-    peer.send(JSON.stringify(data));
-    console.log('sent the name to the other peer');
-  } */
+    peer.send(JSON.stringify(data)); 
+    console.log('SEND DATA', data);
+  }  */
+
+  callPeer($otherSocketIds.value);
 };
 
 const callPeer = async (peerId) => {
@@ -748,10 +873,12 @@ const callPeer = async (peerId) => {
       channelName: 'data',
     },
   });
-
+  console.log('PEER:', peer);
   connectedPeerId = peerId;
   peer.on('signal', (signal) => {
     socket.emit('signal', peerId, signal);
+    //document.querySelector('.scores__other--user').innerHTML = peerId;
+    console.log("I'm sending a signal to " + peerId);
   });
   peer.on('stream', (stream) => {
     $otherVideo.srcObject = stream;
@@ -774,12 +901,13 @@ const callPeer = async (peerId) => {
       Data => Callee receives from receiver*/
   peer.on('connect', () => {
     //peer.send('hello threre!');
-    console.log('hello'); //see this on callee side
-
+    console.log('hello its me from the sender'); //see this on callee side
+    //document.querySelector('.scores__other--user').innerHTML = peerId; //works only ID and if you are the caller
     $userContainer.classList.remove('visibility');
     //send the name? -> callee receives the receivers name and displays it along with score count on the screen
   });
 
+  //Caller / initiator
   peer.on('data', (data) => {
     console.log('got a message from the other peer: ' + data); //received back from the other peer!
 
@@ -793,6 +921,7 @@ const callPeer = async (peerId) => {
         console.log(data.resuslt);
         console.log('finalResult container should be visible');
         $finalRemoteText.textContent = `${data.result} Simpsons`;
+
         document.getElementById(
           'finalImgExternal'
         ).src = `./assets/${data.result}.png`;
@@ -800,12 +929,19 @@ const callPeer = async (peerId) => {
           'finalImgExternal'
         ).alt = `${data.result} Simpsons`;
         $otherVideo.classList.remove('hidden');
-
+        $finalRemoteText.classList.add('result__final--friend');
+        $resultTitle.classList.add('result__title--friend');
         console.log('show result marge works');
+        document.querySelector('.remote__name').classList.remove('hidden');
         console.log(data);
       } else if (data.type === 'updateName') {
-        console.log(data.name);
-        document.querySelector('.scores__other--user').innerHTML = data.name;
+        console.log(data.name, 'receive name from other peer on caller side');
+        const otherUserName = data.name; // Extract the received name
+        const $otherUserElement = document.querySelector(
+          '.scores__other--user'
+        );
+        $otherUserElement.textContent = otherUserName;
+        document.querySelector('.remote__name').textContent = otherUserName;
         /* $nameUserMarge.innerHTML = data.name; */
       }
     } catch (e) {
@@ -843,6 +979,7 @@ const handlePeerOffer = async (myPeerId, offer, peerId) => {
 
   peer.on('connect', () => {
     $userContainer.classList.remove('visibility');
+    console.log('hello its me from the receiver', peerId);
   });
 
   /*could update css here for the receiver side - on connect, execute*/
@@ -874,13 +1011,20 @@ const handlePeerOffer = async (myPeerId, offer, peerId) => {
         document.getElementById(
           'finalImgExternal'
         ).alt = `${data.result} Simpsons`;
+        $finalRemoteText.classList.add('result__final--friend'); //different css
+        $resultTitle.classList.add('result__title--friend');
         $otherVideo.classList.remove('hidden');
+        document.querySelector('.remote__name').classList.remove('hidden');
+
         console.log(data);
       } else if (data.type === 'updateName') {
-        console.log('update name works');
-        console.log(data);
-        document.querySelector('.scores__other--user').innerHTML = data.name;
-        console.log('update name works', data.name);
+        console.log('update name works on receiver side');
+        const otherUserName = data.name; // Extract the received name
+        const $otherUserElement = document.querySelector(
+          '.scores__other--user'
+        );
+        $otherUserElement.textContent = otherUserName;
+        document.querySelector('.remote__name').textContent = otherUserName;
         /* $usernameRemote.textContent = data.name; */
       }
     } catch (e) {

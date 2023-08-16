@@ -12,8 +12,8 @@ let appIcon;
 const createWindow = () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1350,
+    height: 745,
     backgroundColor: '#45c6bc',
     /* icon: './public/assets/doughnut-icon.icns', */
     webPreferences: {

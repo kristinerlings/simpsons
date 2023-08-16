@@ -7,36 +7,48 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="https://use.typekit.net/cry8nyb.css">
-  <title>Which Simposns are you?</title>
+  <title>Which Simpsons are you?</title>
 </head>
 
-<body class="body" onload="hideGame()"> <!-- call function   onload=" hideGame()"-->
+<body class="body"> <!-- call function   onload=" hideGame()"-->
   <div class="tutorial__container">
     <div class="tutorial__panel">
+      <div class="tutorial__intro__container">
+        <h1>Which Simpsons do you resemble?</h1>
+        <p>Answer the quiz to find out!</p>
+
+
+      </div>
       <div class="tutorial__username__container">
-        <h2>Write your name here</h2>
-        <form id="nameForm" method="post" action=""> 
-          <input id="nameInput" type="text" name="nameInput" placeholder="username">
+        <h2>Tell us a little bit about yourself</h2>
+        <p>What is your name? <span class="optional">*Optional</span></p>
+        <form id="nameForm" method="post" action="">
+          <label for="nameInput" class="hidden">Name:</label>
+          <input id="nameInput" type="text" name="nameInput" placeholder="Sarah Johnsson">
           <!-- <button type="submit">Submit Name</button>
           <span class="error"></span>-->
-         </form> 
+        </form>
       </div>
       <div class="tutorial__connect__container">
         <div class="start__connect">
           <h2>Let's make it more fun</h2>
           <p>Select a friend to connect with</p>
-          <label for="otherSocketIds">Peer: </label>
+          <label for="otherSocketIds">Friend: </label>
           <select id="otherSocketIds"></select>
+          <p class="connect--optional">*Optional - leave it blank to take quiz by yourself</p>
         </div>
       </div>
       <div class="tutorial__tutorial__container">
-        <h2>How to play</h2>
+        <h2>How to play with Arduino</h2>
         <img class="tutorial__img" src="./assets/hand.png" alt="simpson hand" width="80px">
-        <p>Get your hands close to the sensor to raise your hand up</p>
-        <p></p>
+        <p>Place an item close to the Arduino sensor <br>to select either button<span class="tutorial--down">down</span>
+          or <span class="tutorial--up">up</span></p>
       </div>
-
-      <button onclick="setUserConfiguration()" class="btn__next">Next</button>
+      <div class="tutorial__buttons">
+        <button class="btn__back visibility">Back</button>
+        <p class="tutorial__steps visibility"></p>
+        <button class="btn__next">Continue</button> <!-- onclick="updateUserInterface()"-->
+      </div>
     </div>
   </div>
 
@@ -45,7 +57,7 @@
       <div class="container__qr">
         <h1 class="title hidden">Desktop</h1>
         <div id="app">
-          <button id="connect-button">Connect to serial port</button>
+          <button id="connect-button">Connect Arduino</button>
           <div id="not-supported">
             Web Serial is not supported in this browser.
           </div>
@@ -114,7 +126,7 @@
           <video id="myVideo" playsinline autoplay muted></video>
           <!-- ====  SHOW  RESULTS   ==== -->
           <!-- add video later as well -->
-
+          <h3 class="video__myname"></h3>
           <div class="questions">
             <p class="question" id="question"></p>
             <!-- select answer / buttons-->
@@ -123,8 +135,11 @@
                 <li id="optionOne" class="option__a"></li>
                 <li id="optionTwo" class="option__b"></li>
               </ul>
+              <div class="countdown__countainer visibility">
+                <h4 class="countdown__title">Select answer in:&nbsp;</h4>
+                <p id="countdown__display" class="countdown__number">0</p>
+              </div>
             </section>
-
 
             <!-- my local score count -->
             <div class="questions__scoreboard">
@@ -139,10 +154,7 @@
                 <li class="score indoor" id="indoorScore">0</li>
               </ul>
             </div>
-            <div class="countdown__countainer">
-              <h3 class="countdown__title">Countdown</h3>
-              <p id="countdown__display" class="countdown__number">0</p>
-            </div>
+
           </div>
 
           <h3 class="result__title"></h3>
@@ -161,10 +173,11 @@
 
         <!-- add video later as well -->
         <div class="showResult--remote hidden">
-          <h2>Receiver: </h2>
+          <h2></h2>
           <!--<h3 class="result__final">Waiting for your friends results...</h3>-->
           <div class="remote__visuals">
-            <h3 class="result__final">Waiting for your friends results...</h3>
+            <p class="remote__name hidden"></p>
+            <h3 class="result__final">Waiting for your friends results<span class="loading"></span></h3>
             <img id="finalImgExternal" src="" alt="" widht="390" height="480">
             <video id="otherVideo" class="hidden" playsinline autoplay muted></video>
           </div>

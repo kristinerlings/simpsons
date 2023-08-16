@@ -49,7 +49,7 @@ const updateUserInterface = () => {
     $tutorialIntroContainer.style.display = 'flex';
     $tutorialPanel.style.backgroundImage = 'url(./assets/introsimpsons.png)';
     $tutorialPanel.style.backgroundRepeat = 'no-repeat';
-    $tutorialPanel.style.backgroundSize = '68%';
+    $tutorialPanel.style.backgroundSize = '64%';
     $tutorialPanel.style.backgroundPosition = 'bottom 83% left 10%';
     $usernameContainer.style.display = 'none';
     $tutorailConnectContainer.style.display = 'none';
@@ -932,6 +932,7 @@ const callPeer = async (peerId) => {
         $finalRemoteText.classList.add('result__final--friend');
         $resultTitle.classList.add('result__title--friend');
         console.log('show result marge works');
+        document.querySelector('.remote__name').classList.remove('hidden');
         console.log(data);
       } else if (data.type === 'updateName') {
         console.log(data.name, 'receive name from other peer on caller side');
@@ -939,7 +940,8 @@ const callPeer = async (peerId) => {
         const $otherUserElement = document.querySelector(
           '.scores__other--user'
         );
-        $otherUserElement.innerHTML = otherUserName;
+        $otherUserElement.textContent = otherUserName;
+        document.querySelector('.remote__name').textContent = otherUserName;
         /* $nameUserMarge.innerHTML = data.name; */
       }
     } catch (e) {
@@ -1012,6 +1014,8 @@ const handlePeerOffer = async (myPeerId, offer, peerId) => {
         $finalRemoteText.classList.add('result__final--friend'); //different css
         $resultTitle.classList.add('result__title--friend');
         $otherVideo.classList.remove('hidden');
+        document.querySelector('.remote__name').classList.remove('hidden');
+
         console.log(data);
       } else if (data.type === 'updateName') {
         console.log('update name works on receiver side');
@@ -1019,7 +1023,8 @@ const handlePeerOffer = async (myPeerId, offer, peerId) => {
         const $otherUserElement = document.querySelector(
           '.scores__other--user'
         );
-        $otherUserElement.innerHTML = otherUserName;
+        $otherUserElement.textContent = otherUserName;
+        document.querySelector('.remote__name').textContent = otherUserName;
         /* $usernameRemote.textContent = data.name; */
       }
     } catch (e) {
