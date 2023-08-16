@@ -31,6 +31,7 @@ const $usernameContainer = document.querySelector(
 const $username = document.getElementById('nameInput');
 const $nextButton = document.querySelector('.btn__next');
 const $tutorialSteps = document.querySelector('.tutorial__steps');
+const $nameInput = document.getElementById('nameInput');
 let stepNumber = 0;
 let usernameValue = '';
 
@@ -48,8 +49,8 @@ const updateUserInterface = () => {
     $tutorialIntroContainer.style.display = 'flex';
     $tutorialPanel.style.backgroundImage = 'url(./assets/introsimpsons.png)';
     $tutorialPanel.style.backgroundRepeat = 'no-repeat';
-    $tutorialPanel.style.backgroundSize = '70%';
-    $tutorialPanel.style.backgroundPosition = 'bottom 80% left 10%';
+    $tutorialPanel.style.backgroundSize = '68%';
+    $tutorialPanel.style.backgroundPosition = 'bottom 83% left 10%';
     $usernameContainer.style.display = 'none';
     $tutorailConnectContainer.style.display = 'none';
     $tutorialTutorialContainer.style.display = 'none';
@@ -79,6 +80,11 @@ const updateUserInterface = () => {
     $nextButton.addEventListener('click', (event) => {
       handleSubmitName(event);
     });
+    $nameInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+      }
+    });
   } else if (stepNumber === 2) {
     $tutorialIntroContainer.style.display = 'flex';
     $tutorialPanel.style.backgroundImage = 'url(./assets/cat.png)';
@@ -107,6 +113,7 @@ const updateUserInterface = () => {
   } else if (stepNumber === 4) {
     $tutorialContainer.style.display = 'none';
     $gameContainer.style.display = 'flex';
+    sendMyName();
   }
 };
 
@@ -126,8 +133,6 @@ $backButton.addEventListener('click', () => {
   }
 });
 
-// Initial setup
-updateUserInterface();
 /*=======================================
           2. Start Game 
     =========================================*/
@@ -567,6 +572,9 @@ const showFinalContainer = () => {
   $video.style.width = '35rem';
   $otherVideo.style.width = '35rem';
   document.querySelector('.video__container').style.width = '35rem';
+  document
+    .querySelector('.result__title')
+    .classList.add('result__title--friend'); //shitfix to adjust css for the final result
 
   // $img__simpsons.classList.add(`hidden`);
 
@@ -642,16 +650,26 @@ const $screenName = document.querySelector('.start__name');
 const $nameForm = document.getElementById('nameForm');
 
 const $nameError = $screenName.querySelector('.error');
+const $myName = document.querySelector('.video__myname');
 
 const handleSubmitName = (event) => {
-  const $nameInput = document.getElementById('nameInput');
   event.preventDefault();
   console.log($nameInput.value);
   if ($nameInput.value) {
     socket.emit('name', $nameInput.value);
     console.log('handleSubmitName works');
     console.log('handleSubmitName:', $nameInput.value);
+    $myName.innerHTML = $nameInput.value;
   }
+};
+
+const sendMyName = () => {
+  //pass on myName
+  const data = {
+    type: 'updateName',
+    name: $myName.innerHTML,
+  };
+  peer.send(JSON.stringify(data));
 };
 
 //If I'm going to have multiple screens = good idea to have generic function that receives elements to show
@@ -734,6 +752,9 @@ const init = async () => {
   console.log($chooseAnswerA, 'choose answer A works');
 
   // usersScoreList(); //update user score list
+
+  // Initial setup - Onboarding
+  updateUserInterface();
 };
 
 const socketURL = '/';
@@ -886,6 +907,7 @@ const callPeer = async (peerId) => {
     //send the name? -> callee receives the receivers name and displays it along with score count on the screen
   });
 
+  //Caller / initiator
   peer.on('data', (data) => {
     console.log('got a message from the other peer: ' + data); //received back from the other peer!
 
@@ -899,6 +921,7 @@ const callPeer = async (peerId) => {
         console.log(data.resuslt);
         console.log('finalResult container should be visible');
         $finalRemoteText.textContent = `${data.result} Simpsons`;
+
         document.getElementById(
           'finalImgExternal'
         ).src = `./assets/${data.result}.png`;
@@ -906,7 +929,8 @@ const callPeer = async (peerId) => {
           'finalImgExternal'
         ).alt = `${data.result} Simpsons`;
         $otherVideo.classList.remove('hidden');
-
+        $finalRemoteText.classList.add('result__final--friend');
+        $resultTitle.classList.add('result__title--friend');
         console.log('show result marge works');
         console.log(data);
       } else if (data.type === 'updateName') {
@@ -985,6 +1009,8 @@ const handlePeerOffer = async (myPeerId, offer, peerId) => {
         document.getElementById(
           'finalImgExternal'
         ).alt = `${data.result} Simpsons`;
+        $finalRemoteText.classList.add('result__final--friend'); //different css
+        $resultTitle.classList.add('result__title--friend');
         $otherVideo.classList.remove('hidden');
         console.log(data);
       } else if (data.type === 'updateName') {
