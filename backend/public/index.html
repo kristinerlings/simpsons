@@ -45,7 +45,7 @@
       <div class="tutorial__buttons">
         <button class="btn__back visibility">Back</button>
         <p class="tutorial__steps visibility"></p>
-        <button class="btn__next">Continue</button> 
+        <button class="btn__next">Continue</button>
       </div>
     </div>
   </div>
@@ -69,7 +69,6 @@
           </div>
         </div>
         <section class="container__start">
-          <!-- Write your name -->
           <div class="start__name hidden screen screen--visible">
             <h2>Ready to find out which Simpsons character you are?</h2>
             <p>What is your name?</p>
@@ -94,8 +93,7 @@
       </section>
     </section>
 
-    
-    <section class="container__questions " id="test">
+    <section class="container__questions" id="test">
       <h3 class="hidden">The questions</h3>
       <div class="camera">
         <div class="video__container">
@@ -104,7 +102,6 @@
           <h3 class="video__myname"></h3>
           <div class="questions">
             <p class="question" id="question"></p>
-            <!-- select answer / buttons-->
             <section class="container__options" id="test">
               <ul class="list__options">
                 <li id="optionOne" class="option__a"></li>
@@ -115,8 +112,6 @@
                 <p id="countdown__display" class="countdown__number">0</p>
               </div>
             </section>
-
-            <!-- my local score count -->
             <div class="questions__scoreboard">
               <ul class="score__sections--marge">
                 <li class="section"><img src="./assets/icon-yellow-f.svg" alt="icon marge" width="33" height="33">
@@ -139,13 +134,8 @@
         </div>
         <div class="showResult visibility">
           <h3 class="result__title"></h3>
-
           <img id="finalImgLocal" src="" alt="" widht="390" height="480">
-
         </div>
-
-
-        <!-- add video later as well -->
         <div class="showResult--remote hidden">
           <h2></h2>
           <div class="remote__visuals">
@@ -156,10 +146,8 @@
           </div>
         </div>
       </div>
-
     </section>
-
-  </div><!--  close container__page-->
+  </div>
 
 
   <script src="/socket.io/socket.io.js"></script>

@@ -20,7 +20,6 @@ const createWindow = () => {
     },
   });
 
-
   const handleSelectSerialPort = (event, portList, webContents, callback) => {
     console.log('select-serial-port FIRED WITH', portList);
     console.log('portlist:', portList);
@@ -49,36 +48,26 @@ const createWindow = () => {
     );
   });
 
-
   // mainWindow.loadFile(path.join(__dirname, './public/index.html'));
   mainWindow.loadURL('http://localhost:8443'); // load electron from backend
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-
-  //submenu -> array -> each array can have array of submenus with label objects
-  //click: listen to click event on submenu
-  //type seperator: add horizontal line between the labels
-  //
-  const appIcon = new Tray('/assets/doughnut.png');
-  console.log(appIcon);
-  app.dock.setIcon(appIcon);
 
   const menuTemplate = [
     {
       label: app.name,
       submenu: [
         {
-          role: 'Close',
+          role: 'close',
         },
         { type: 'separator' },
-        { role: 'Quit' },
+        { role: 'quit' },
       ],
     },
     {
@@ -88,7 +77,7 @@ app.on('ready', () => {
           label: 'New Window',
           click: createWindow,
         },
-        { label: 'Close Window', role: 'Close' },
+        { label: 'Close Window', role: 'close' },
       ],
     },
     {
@@ -121,24 +110,29 @@ app.on('ready', () => {
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
 
-  //create Context Menu/(right click menu):
-  const contextMenuTemplate = [
+
+  const rightClickMenuTemplate = [
     { role: 'cut' },
     { role: 'copy' },
     { role: 'paste' },
     { role: 'selectAll' },
+    { type: 'separator' },
+    { label: 'Restart Game', role: 'reload' },
+    { label: 'DevTools', role: 'toggleDevTools' },
   ];
 
-  const contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
-
+  const contextMenu = Menu.buildFromTemplate(rightClickMenuTemplate);
   createWindow();
-
+  
+  //Context menu after createWindow() - needs webContents
   mainWindow.webContents.on('context-menu', (event, params) => {
-    contextMenu.popup(mainWindow, params.x, params.y); //coordinates of where the mouse was right clicked
+    contextMenu.popup(mainWindow, params.x, params.y); //mouse coordinates 
   });
-  //need to attach this to the webcontext property of the browser window
 
- 
+ /* ==== Icon ==== */ 
+  appIcon = new Tray('/assets/doughnut.png');
+  console.log(appIcon);
+  app.dock.setIcon(appIcon);
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

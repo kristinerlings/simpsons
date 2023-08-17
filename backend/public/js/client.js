@@ -5,7 +5,8 @@
   3.1. Ping Distance Sensor
   3.2. Servo Motor
 4. Quiz Logic
-
+5. Socket IO / websockets
+6. WebRTC / SimplePeer
 */
 
 /*=======================================
@@ -35,6 +36,7 @@ const $nameInput = document.getElementById('nameInput');
 let stepNumber = 0;
 let usernameValue = '';
 
+//Showcase onboarding
 const updateUserInterface = () => {
   if (stepNumber === 0) {
     $tutorialIntroContainer.style.display = 'flex';
@@ -162,7 +164,7 @@ const $finalRemoteText = document.querySelector('.result__final');
           3. Arduino 
     =========================================*/
 const hasWebSerial = 'serial' in navigator;
-let isConnected = false; // state of the serial connection to the Arduino
+let isConnected = false; 
 
 const $notSupported = document.getElementById('not-supported');
 const $supported = document.getElementById('supported');
@@ -190,17 +192,13 @@ const isArduinoPort = (port) => {
 
 const handleClickConnect = async () => {
   const port = await navigator.serial.requestPort();
-  console.log(port);
   const info = port.getInfo();
-  console.log(info);
   await connect(port);
 };
 
 const updateArduino = () => {
   const dataToSend = { m: margeScore, h: homerScore };
   writer.write(JSON.stringify(dataToSend) + '\n');
-  console.log(dataToSend, 'send data ');
-  console.log('update arduino works?');
 };
 
 let startTime;
@@ -270,12 +268,11 @@ const receiveDataFromArduino = async (port) => {
   setTime();
 
   while (port.readable) {
-    const decoder = new TextDecoderStream(); //text de-coder stream - converst values to a string
+    const decoder = new TextDecoderStream(); 
     const readableStreamClosed = port.readable.pipeTo(decoder.writable);
     const inputStream = decoder.readable.pipeThrough(lineBreakTransformer);
-    const reader = inputStream.getReader(); // this will add the transforming step to our stream
+    const reader = inputStream.getReader();
 
-    // const reader = port.readable.getReader();
     try {
       while (true) {
         const { value, done } = await reader.read();
@@ -283,10 +280,8 @@ const receiveDataFromArduino = async (port) => {
           // |reader| has been canceled.
           break;
         }
-        // Do something with |value|...
         try {
           const parsedJson = JSON.parse(value);
-          console.log('value : ', value);
           hoverAnswer(parsedJson);
           if (checkTime()) {
             processAnswer(parsedJson);
@@ -297,7 +292,6 @@ const receiveDataFromArduino = async (port) => {
         }
       }
     } catch (error) {
-      // Handle |error|...
     } finally {
       reader.releaseLock();
     }
@@ -306,7 +300,7 @@ const receiveDataFromArduino = async (port) => {
 
 const hoverAnswer = (json) => {
   const selectedColor = '#fbd239';
-  const baseColor = '#DE5893'; //#059a93 blue
+  const baseColor = '#DE5893'; 
 
   if (json.sensor === 'ping') {
     if (json.buttonUp) {
@@ -327,7 +321,7 @@ const hoverAnswer = (json) => {
 };
 
 const processAnswer = (json) => {
-  const baseColor = '#DE5893'; //#059a93 blue
+  const baseColor = '#DE5893'; 
   const selectedColor = '#fbd239';
   console.log(json);
   if (json.sensor === 'ping') {
@@ -345,7 +339,7 @@ const processAnswer = (json) => {
 
 /* ----------- SERVO SENSOR ----------- */
 
-//Json data from arduino -> process it and update UI (called in receiveDataFromArduino)
+//Process data from Arduino & update UI
 const processJson = (json) => {
   console.log(json);
   if (json.sensor === 'ping') {
@@ -353,8 +347,6 @@ const processJson = (json) => {
     if (json.buttonUp) {
       console.log('button up');
       $chooseAnswerB.style.backgroundColor = '#059a93';
-      //dispatch click after 5 seconds
-
       $chooseAnswerA.dispatchEvent(new Event('click'));
       $chooseAnswerA.addEventListener('click', handleSelectAnswer);
       $chooseAnswerA.style.backgroundColor = '#059a93';
@@ -362,11 +354,8 @@ const processJson = (json) => {
       console.log('button down');
       $chooseAnswerB.style.backgroundColor = '#fbd239';
       $chooseAnswerA.style.backgroundColor = '#059a93';
-      //dispatch click after 5 seconds
-
       $chooseAnswerB.dispatchEvent(new Event('click'));
       $chooseAnswerB.addEventListener('click', handleSelectAnswer);
-      /*  $chooseAnswerB.style.backgroundColor = '#059a93'; */
     }
   }
 };
@@ -379,15 +368,13 @@ const connect = async (port) => {
   await port.open({ baudRate: 9600 });
 
   if (port) {
-    receiveDataFromArduino(port); //handles the logic for receiving data from arduino
+    receiveDataFromArduino(port); 
     const textEncoder = new TextEncoderStream();
     const writableStreamClosed = textEncoder.readable.pipeTo(port.writable);
     writer = textEncoder.writable.getWriter();
 
-    /*Update score -> reset the servo */
-    updateArduino();
+    updateArduino(); //update scores
 
-    //if is disconnected, update UI
     port.addEventListener('disconnect', () => {
       console.log('Disconnected');
       isConnected = false;
@@ -468,16 +455,6 @@ const handleSelectAnswer = (e) => {
   const currentAnswer = e.target.textContent;
   calculateScores(currentAnswer);
   showNextQuestion();
-  console.log('handle select answer works');
-
-  //send the selected answer to the other peer -> don't need this, but keep for now
-  /* if (peer) {
-    const data = {
-      type: 'updateQuestion',
-      selectedAnswer: currentAnswer,
-    };
-    peer.send(JSON.stringify(data));
-  } */
 };
 
 
@@ -523,11 +500,11 @@ const calculateScores = async (selectedAnswer) => {
   }
 };
 
-//
+
 const refreshQuiz = () => {
   window.location.reload();
 };
-//
+
 const showFinalContainer = () => {
   $questionsContainer.classList.add(`visibility`);
   $resultContainer.classList.remove(`visibility`);
@@ -537,10 +514,7 @@ const showFinalContainer = () => {
   document.querySelector('.video__container').style.width = '35rem';
   document
     .querySelector('.result__title')
-    .classList.add('result__title--friend'); //shitfix to adjust css for the final result
-
-  // $img__simpsons.classList.add(`hidden`);
-
+    .classList.add('result__title--friend'); 
   $btnRetakeQuiz.classList.remove(`hidden`);
   $btnRetakeQuiz.addEventListener(`click`, refreshQuiz);
   let result;
@@ -550,13 +524,11 @@ const showFinalContainer = () => {
     document.querySelector('.result__title').textContent = `${result} Simpsons`;
     document.getElementById('finalImgLocal').src = `./assets/${result}.png`;
     document.getElementById('finalImgLocal').alt = `${result} Simpsons`;
-    //    showResultMarge();
   } else {
     result = 'Homer';
     document.querySelector('.result__title').textContent = `${result} Simpsons`;
     document.getElementById('finalImgLocal').src = `./assets/${result}.png`;
     document.getElementById('finalImgLocal').alt = `${result} Simpsons`;
-    //    showResultHomer();
   }
 
   if (peer) {
@@ -582,7 +554,7 @@ const showResultMarge = () => {
     "You're responsible, caring, and always trying to do what's best for your family.";
   $questionsContainer.classList.add('hidden');
 };
-//
+
 const showResultHomer = () => {
   $resultTitle.textContent = 'Homer Simpson';
   $resultText.textContent = "You're more like Homer Simpson!";
@@ -591,7 +563,7 @@ const showResultHomer = () => {
   $questionsContainer.classList.add('hidden');
 };
 
-//
+
 const displayScores = () => {
   $margeCount.textContent = margeScore;
   $homerCount.textContent = homerScore;
@@ -606,8 +578,7 @@ const displayScores = () => {
   }
 };
 
-// ends
-/**/
+
 
 const $screenName = document.querySelector('.start__name');
 const $nameForm = document.getElementById('nameForm');
@@ -617,29 +588,25 @@ const $myName = document.querySelector('.video__myname');
 
 const handleSubmitName = (event) => {
   event.preventDefault();
-  console.log($nameInput.value);
   if ($nameInput.value) {
     socket.emit('name', $nameInput.value);
-    console.log('handleSubmitName works');
-    console.log('handleSubmitName:', $nameInput.value);
     $myName.innerHTML = $nameInput.value;
   }
 };
 
 const sendMyName = () => {
   try {
-    //pass on myName
     const data = {
       type: 'updateName',
       name: $myName.innerHTML,
     };
     peer.send(JSON.stringify(data));
   } catch (e) {
-    console.log(e);
+    //console.log(e);
   }
 };
 
-//If I'm going to have multiple screens = good idea to have generic function that receives elements to show
+//Generic function for receiving elements if I have multiple screens
 const showScreen = ($screen) => {
   $screenName.classList.toggle('screen--visible', $screen === $screenName);
 };
@@ -661,15 +628,15 @@ const init = async () => {
     $video.style.backgroundRepeat = 'no-repeat';
   }
   initSocket();
+
   /* ---------   ARDUINO   --------- */
   displaySupportedState();
   if (!hasWebSerial) return;
   displayConnectionState();
-  //connect handler:
+
   navigator.serial.addEventListener('connect', (e) => {
     const port = e.target;
     const info = port.getInfo();
-    console.log('connect', port, info);
     if (isArduinoPort(port)) {
       connectedArduinoPorts.push(port);
       if (!isConnected) {
@@ -681,23 +648,20 @@ const init = async () => {
   navigator.serial.addEventListener('disconnect', (e) => {
     const port = e.target;
     const info = port.getInfo();
-    console.log('disconnect', port, info);
     connectedArduinoPorts = connectedArduinoPorts.filter(
       (portValue) => portValue !== port
     );
   });
+
   const ports = await navigator.serial.getPorts();
   connectedArduinoPorts = ports.filter(isArduinoPort);
 
-  console.log('Ports');
   ports.forEach((port) => {
     const info = port.getInfo();
-    console.log(info);
   });
-  console.log('Connected Arduino ports');
+
   connectedArduinoPorts.forEach((port) => {
     const info = port.getInfo();
-    console.log(info);
   });
 
   if (connectedArduinoPorts.length > 0) {
@@ -705,23 +669,22 @@ const init = async () => {
   }
 
   $connectButton.addEventListener('click', handleClickConnect);
-  /*ARDUINO STOPS HERE */
+
 
   /* ========  QUIZ STARTS HERE ========  */
-
-  displayScores(); //update score
-  showNextQuestion(); //update question
+  displayScores();
+  showNextQuestion();
 
   $chooseAnswerA.addEventListener('click', handleSelectAnswer);
   $chooseAnswerB.addEventListener('click', handleSelectAnswer);
-  /*  handleSelectAnswer(e); */
-  console.log($chooseAnswerB, 'choose answer B works');
-  console.log($chooseAnswerA, 'choose answer A works');
 
-  // Initial setup - Onboarding
+
+
+/* ========  ONBOARDING  ========  */ 
   updateUserInterface();
 };
 
+/* ========  SocketIO  ========  */ 
 const socketURL = '/';
 
 const initSocket = () => {
@@ -732,13 +695,10 @@ const initSocket = () => {
   });
 
   socket.on('clients', (clients) => {
-    console.log(clients);
     updatePeerList(clients);
-  }); //create the html for the list of peers
+  });
 
   socket.on('signal', async (myId, signal, peerId) => {
-    console.log(`Received signal from ${peerId}`);
-    console.log(signal);
     if (signal.type === 'offer' && !peer) {
       await handlePeerOffer(myId, signal, peerId);
     }
@@ -758,18 +718,14 @@ const initSocket = () => {
   });
 
   socket.on('name', (clients) => {
-    console.log('you are now named', clients);
     updatePeerList(clients);
   });
 };
 
 const updatePeerList = (clients) => {
-  console.log('ARRAY OF CLIENTS', clients);
-
   $otherSocketIds.innerHTML =
     '<option value="none">--- Select Friend To Call ---</option>';
   for (const otherSocketId in clients) {
-    //const isMyOwnId = (clientId === socket.id);
     if (clients.hasOwnProperty(otherSocketId)) {
       const otherClient = clients[otherSocketId];
       if (otherClient.id !== socket.id) {
@@ -782,11 +738,11 @@ const updatePeerList = (clients) => {
   }
 };
 
+/* ========  WebRTC / Simple Peer  ========  */ 
 const callSelectedPeer = () => {
   if ($otherSocketIds.value === '') {
     return;
   }
-  console.log(`Call the selected peer: ${$otherSocketIds.value} `);
   callPeer($otherSocketIds.value);
 };
 
@@ -800,18 +756,16 @@ const callPeer = async (peerId) => {
       channelName: 'data',
     },
   });
-  console.log('PEER:', peer);
   connectedPeerId = peerId;
   peer.on('signal', (signal) => {
     socket.emit('signal', peerId, signal);
-    console.log("I'm sending a signal to " + peerId);
   });
+
   peer.on('stream', (stream) => {
     $otherVideo.srcObject = stream;
   });
 
   peer.on('close', () => {
-    console.log('closed');
     peer.destroy();
     peer = null;
     $userContainer.classList.add('visibility');
@@ -821,27 +775,18 @@ const callPeer = async (peerId) => {
     console.log('error');
   });
 
-  /*
-  /* Connect => The callee
-    Data => Callee receives from receiver*/
   peer.on('connect', () => {
-    console.log('hello its me from the sender'); //see this on callee side
     $userContainer.classList.remove('visibility');
   });
 
   //Caller / initiator
   peer.on('data', (data) => {
-    console.log('got a message from the other peer: ' + data); //received back from the other peer!
-
     try {
       data = JSON.parse(data);
       if (data.type === 'updateScore') {
-        console.log(data.score);
         $scoreUserHomer.innerHTML = data.homerScore;
         $scoreUserMarge.innerHTML = data.margeScore;
       } else if (data.type === 'showFinalResult') {
-        console.log(data.resuslt);
-        console.log('finalResult container should be visible');
         $finalRemoteText.textContent = `${data.result} Simpsons`;
         document.getElementById(
           'finalImgExternal'
@@ -852,15 +797,10 @@ const callPeer = async (peerId) => {
         $otherVideo.classList.remove('hidden');
         $finalRemoteText.classList.add('result__final--friend');
         $resultTitle.classList.add('result__title--friend');
-        console.log('show result marge works');
         document.querySelector('.remote__name').classList.remove('hidden');
-        console.log(data);
       } else if (data.type === 'updateName') {
-        console.log(data.name, 'receive name from other peer on caller side');
-        const otherUserName = data.name; // Extract the received name
-        const $otherUserElement = document.querySelector(
-          '.scores__other--user'
-        );
+        const otherUserName = data.name; 
+        const $otherUserElement = document.querySelector('.scores__other--user');
         $otherUserElement.textContent = otherUserName;
         document.querySelector('.remote__name').textContent = otherUserName;
       }
@@ -890,7 +830,6 @@ const handlePeerOffer = async (myPeerId, offer, peerId) => {
   });
 
   peer.on('close', () => {
-    console.log('closed');
     peer.destroy();
     peer = null;
     $userContainer.classList.add('visibility');
@@ -899,44 +838,28 @@ const handlePeerOffer = async (myPeerId, offer, peerId) => {
 
   peer.on('connect', () => {
     $userContainer.classList.remove('visibility');
-    console.log('hello its me from the receiver', peerId);
   });
 
-  /* receiver side */
+  /* receiver*/
   peer.on('data', (data) => {
-    console.log('got a message from the callee?? ' + data); //receive from the callee on 'conncet'.
     try {
       data = JSON.parse(data);
       if (data.type === 'updateScore') {
-        console.log(data.score);
         $scoreUserHomer.innerHTML = data.homerScore;
         $scoreUserMarge.innerHTML = data.margeScore;
       } else if (data.type === 'showFinalResult') {
-        console.log('is it homer or marge', data.result);
-        //  if (data.result === 'Marge') {
-        //$finalResultRemote.classlist.remove('hidden');
         $finalRemoteText.textContent = `${data.result} Simpsons`;
-        document.getElementById('finalImgExternal').src = `${
-          data.result == 'Homer' ? './assets/Homer.png' : './assets/Marge.png'
-        }`;
-        document.getElementById(
-          'finalImgExternal'
-        ).alt = `${data.result} Simpsons`;
-        $finalRemoteText.classList.add('result__final--friend'); //different css
+        document.getElementById('finalImgExternal').src = `${data.result == 'Homer' ? './assets/Homer.png' : './assets/Marge.png'}`;
+        document.getElementById('finalImgExternal').alt = `${data.result} Simpsons`;
+        $finalRemoteText.classList.add('result__final--friend'); 
         $resultTitle.classList.add('result__title--friend');
         $otherVideo.classList.remove('hidden');
         document.querySelector('.remote__name').classList.remove('hidden');
-
-        console.log(data);
       } else if (data.type === 'updateName') {
-        console.log('update name works on receiver side');
-        const otherUserName = data.name; // Extract the received name
-        const $otherUserElement = document.querySelector(
-          '.scores__other--user'
-        );
+        const otherUserName = data.name; 
+        const $otherUserElement = document.querySelector('.scores__other--user');
         $otherUserElement.textContent = otherUserName;
         document.querySelector('.remote__name').textContent = otherUserName;
-        /* $usernameRemote.textContent = data.name; */
       }
     } catch (e) {
       console.log(e);
