@@ -48,10 +48,6 @@ body {
   --line-height: 1.5rem;
 }
 
-/* 
-  font-family: "ruddy",sans-serif;
-  font-weight: 700;*/
-
 .hidden {
   display: none;
 }
@@ -81,13 +77,10 @@ video {
   object-fit: cover;
   z-index: 1;
   border: 2px solid var(--color-black);
-  /* position:relative; 
-  filter: hue-rotate(230deg); */
 }
 .video__myname, .remote__name{
   position:absolute;
   z-index: 4;
-  /* right: 2.5rem; */
   left: 2.5rem;
   color: var(--color-black);
   font-size: 1rem;
@@ -95,7 +88,6 @@ video {
 }
 .remote__name{
   top: 0rem;
-
 }
 
 
@@ -108,12 +100,10 @@ video {
   bottom: -20%;
 }
 .img__video--marge {
-  /*   transform: translateX(-50%); */
   animation: margeIn 4s ease;
 }
 
 .img__video--homer {
-  /*   transform: translateX(-50%); */
   animation: homerIn 4s ease;
 }
 
@@ -125,7 +115,6 @@ video {
     top: -15%;
   }
   100% {
-    /*   top: -100%; */
     top: 100%;
   }
 }
@@ -140,7 +129,6 @@ video {
     left: 0%;
   }
   100% {
-    /*   top: -100%; */
     top: 100%;
     left: 5%;
   }
@@ -162,13 +150,7 @@ video {
   font-weight: bold;
   font-size: 1.1rem;
 }
-/* .container__users > .btn__retake {
-   display: flex;
-  justify-self: center;
-  align-self: center;
-  text-align: center;
-}
- */
+
 
 /* ------------  Page container   ------------*/
 
@@ -187,9 +169,6 @@ ul {
   justify-content: center;
   align-items: center;
   width: 100%;
-/*   display: grid;
-  grid-template-columns: 20% 60% 20%;
-  grid-template-rows: 20% 80%; */
 }
 
 .container__qr{
@@ -206,21 +185,15 @@ ul {
   margin: 0 auto;
 }
 
-.container__users {
-/*   grid-column: 3/4;
-  grid-row: 1/2; */
-}
 
 .container__questions {
-/*   grid-column: 1/4;
-  grid-row: 2/3; */
   display: flex;
  justify-content: center;
-  width: 90%;}
+  width: 90%;
+}
 
 #finalImgLocal,
 #finalImgExternal {
- /*  align-self: flex-end; */
   max-width: 50%;
   height:auto;
   position: absolute;
@@ -245,7 +218,6 @@ ul {
   justify-content: space-evenly;
   align-items: center;
   right: 0;
-  /*   text-align: center; */
   color: var(--color-white);
   font-size: 1.3rem;
   font-weight: bold;
@@ -266,7 +238,6 @@ ul {
   width: 12rem;
   background-color: var(--color-pink);
   border: 2px solid var(--color-black);
-  /* text-align: center; */
   border-radius: 4px;
   margin: 0.7rem;
   color: var(--color-black);
@@ -318,11 +289,6 @@ ul {
   align-items: center;
   justify-content: center;
 }
-
-/* .showResult--remote{
-  width: 30rem;
-  margin-inline-start: 1rem;
-} */
 
 
 .showResult>p {
@@ -396,18 +362,8 @@ ul {
  .result__title, .result__final, #finalImgExternal, #finalImgLocal{
   padding-inline-start: .5rem; 
  }
-/*  .result__title{
-  margin: 2rem;
-  font-size: var(--text-size-m);
-  font-weight: bold;
-  position:absolute;
-  z-index: 4;
-  top: 0;
-  left: 0;
- } */
 
  .result__title, .result__final{
-  /* margin: 2rem; */
   font-size: var(--text-size-m);
   font-weight: bold;
   position:relative;
@@ -463,7 +419,6 @@ ul {
 
  /* -----------------  ONBOARDING  -----------------  */
 
- 
 
  .tutorial__container{
   display:flex;
@@ -496,32 +451,27 @@ ul {
   display:flex;
   flex-direction: column; 
   height: 100%;
-  /* justify-content: center; */
   padding-block-start: 2rem;
   align-items: center;
  }
 
 
  .tutorial__intro__container{
-  /* padding-block-start: 10rem; */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
   height: 100%;
-  
-/*   background-image: url(../assets/introsimpsons.png);
-  background-size: cover;
-  background-position: bottom; */
  }
-  .tutorial__intro__container > h1{
+
+.tutorial__intro__container > h1{
   text-align: center;
-  /* margin-block-start: 4rem; */
   background-color: var(--color-white);
   padding: 1rem;
   border-radius: 4px;
   border: 2px solid var(--color-black);
- }
+}
+
  .tutorial__intro__container > p {
   text-align: center;
   background-color: var(--color-pink);
@@ -542,6 +492,7 @@ ul {
   justify-content: center;
   position: relative;
  }
+
  .tutorial__username__container > h2{
   margin: 0rem;
  }
@@ -550,6 +501,7 @@ ul {
   position: absolute;
   bottom: 26%;
  }
+
  #nameInput{
   border: 2px solid var(--color-pink);
   border-radius: 4px;
@@ -607,7 +559,6 @@ width: 100%;
 }
 
 
-
  @keyframes handUp {
  0% {
     transform: translateX(-30px);
@@ -650,9 +601,6 @@ width: 100%;
   }
 } 
 
-
- 
-
 @keyframes handDown {
   0% {
     transform: translateY(0px);
@@ -664,7 +612,6 @@ width: 100%;
     transform: translateY(0px);
   }
 }
-
 
 .tutorial__img{
   animation: handUp 5s ease-in-out infinite;
@@ -683,7 +630,6 @@ width: 100%;
 .countdown__countainer{
   font-size: 18px;
   display:flex;
-  /* flex-direction: column; */
   justify-content: center;
   align-items: center;
   margin: 0rem;
@@ -720,9 +666,6 @@ width: 100%;
 #otherSocketIds{
   border: 2px solid var(--color-black);
   border-radius: 4px;
-  /* padding: .5rem;
-  width: 13rem;
-  margin: .5rem 0rem; */
 }
 
 
@@ -758,15 +701,11 @@ width: 100%;
 }
 
 
-/**/
 .optional{
   font-size: .8rem;
   color: var(--color-pink);
   font-style: italic;
-
-
 }
-
 
 .btn__next--animate{
   animation: changeSize 3s ease-in-out infinite;
@@ -783,7 +722,6 @@ width: 100%;
     transform: scale(1.1);
   }
 }
-
 
 @media (prefers-reduced-motion) {
   .btn__next--animate {
@@ -802,10 +740,7 @@ width: 100%;
   .tutorial--down{
     animation: colorChangeDown 10s ease-in-out infinite;
   }
-
 }
-
-
 
 #connect-button{
   padding: 1rem; 

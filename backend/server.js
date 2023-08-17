@@ -51,14 +51,9 @@ io.on('connection', (socket) => {
 
     //validation -> check the length
     name = name.trim();
-/*     if (name.length === 0) {
-      //this one does not work? .. the other errror messages work, meaning client side is ok!
-      io.to(peerId).emit('name-error', 'please enter a name');
-      return;
-    } */
 
     //validation -> check if anyone else has the same name
-    let nameInUse = false;
+   /*  let nameInUse = false;
     for (const socketId in clients) {
       if (clients.hasOwnProperty(socketId)) {
         const otherClient = clients[socketId];
@@ -71,7 +66,7 @@ io.on('connection', (socket) => {
     if (nameInUse) {
       socket.emit('name-error', 'name already in use');
       return;
-    }
+    } */
 
     //add the name to the name porperty (collect it)
     console.log(clients);

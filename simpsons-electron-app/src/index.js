@@ -1,7 +1,7 @@
 const { app, BrowserWindow, Tray, Menu, MenuItem } = require('electron');
 const path = require('path');
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
+// Handle creating/removing shortcuts wheb installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
@@ -10,18 +10,17 @@ let mainWindow;
 let appIcon;
 
 const createWindow = () => {
-  // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 1350,
     height: 745,
     backgroundColor: '#45c6bc',
-    /* icon: './public/assets/doughnut-icon.icns', */
+    icon: path.join(__dirname, 'assets/doughnut.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
 
-  //handle Arduino serial port selection
+
   const handleSelectSerialPort = (event, portList, webContents, callback) => {
     console.log('select-serial-port FIRED WITH', portList);
     console.log('portlist:', portList);
@@ -50,8 +49,9 @@ const createWindow = () => {
     );
   });
 
-  // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, './public/index.html'));
+
+  // mainWindow.loadFile(path.join(__dirname, './public/index.html'));
+  mainWindow.loadURL('http://localhost:8443'); // load electron from backend
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
@@ -61,16 +61,15 @@ const createWindow = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-  /* const appIcon = new Tray('/icon/assets/doughnut.png'); */
-  /*   const appIcon = new Tray(
-   './public/assets/doughnut-icon.icns' ); */
-
-
 
   //submenu -> array -> each array can have array of submenus with label objects
   //click: listen to click event on submenu
   //type seperator: add horizontal line between the labels
   //
+  const appIcon = new Tray('/assets/doughnut.png');
+  console.log(appIcon);
+  app.dock.setIcon(appIcon);
+
   const menuTemplate = [
     {
       label: app.name,
@@ -139,27 +138,7 @@ app.on('ready', () => {
   });
   //need to attach this to the webcontext property of the browser window
 
-  // Create and show the tray icon
-  appIcon = new Tray(path.join(__dirname, './public/assets/doughnut-icon'));
-
-  // Define the context menu for the tray icon
-  const trayContextMenu = Menu.buildFromTemplate([
-    {
-      label: 'Open App',
-      click: () => {
-        mainWindow.show(); // Show the main window when the menu item is clicked
-      },
-    },
-    {
-      label: 'Exit',
-      click: () => {
-        app.quit(); // Quit the application when the menu item is clicked
-      },
-    },
-  ]);
-
-  // Set the context menu for the tray icon
-  appIcon.setContextMenu(trayContextMenu);
+ 
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -178,6 +157,3 @@ app.on('activate', () => {
     createWindow();
   }
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.

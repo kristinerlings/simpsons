@@ -1,7 +1,7 @@
 module.exports = {
   packagerConfig: {
     asar: true,
-    icon: '/src/public/assets/doughnut-icon',
+    icon: 'src/assets/doughnut',
   },
   rebuildConfig: {},
   makers: [
@@ -20,6 +20,12 @@ module.exports = {
     {
       name: '@electron-forge/maker-rpm',
       config: {},
+    },
+    {
+      name: '@electron-forge/maker-dmg',
+      config: {
+        icon: 'src/assets/doughnut',
+      },
     },
   ],
   plugins: [

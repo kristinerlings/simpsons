@@ -51,7 +51,7 @@ const updateUserInterface = () => {
     $nextButton.textContent = "Let's begin!";
     $nextButton.classList.add('btn__next--animate');
     $nextButton.addEventListener('mouseenter', () => {
-      $nextButton.style.animationPlayState = 'paused';
+    $nextButton.style.animationPlayState = 'paused';
     });
     $nextButton.addEventListener('mouseleave', () => {
       $nextButton.style.animationPlayState = 'running';
@@ -221,13 +221,6 @@ const setTime = () => {
   startTime = getTime();
 };
 
-/* const displayCheckTime = () => {
-  if (isReady && difference < timer + 1) {
-  //  return true;
-  //}
-  return Math.abs(Math.abs(startTime - 60) - currentTime) > timer;
-}; */
-
 const checkTime = () => {
   const currentTime = getTime();
   const timer = 4; //delay of 4
@@ -349,11 +342,8 @@ const processAnswer = (json) => {
   }
 };
 
-// Global variables to store the current hover status
-//let isButtonUpHovered = false;
-//let isButtonDownHovered = false;
 
-/* ----------- SERVO SENSOR ------- */
+/* ----------- SERVO SENSOR ----------- */
 
 //Json data from arduino -> process it and update UI (called in receiveDataFromArduino)
 const processJson = (json) => {
@@ -481,16 +471,15 @@ const handleSelectAnswer = (e) => {
   console.log('handle select answer works');
 
   //send the selected answer to the other peer -> don't need this, but keep for now
-  if (peer) {
+  /* if (peer) {
     const data = {
       type: 'updateQuestion',
       selectedAnswer: currentAnswer,
     };
     peer.send(JSON.stringify(data));
-  }
+  } */
 };
 
-/* quiz - desktop front */
 
 const showNextQuestion = () => {
   if (questionNumber < questionsArray.length) {
@@ -638,12 +627,16 @@ const handleSubmitName = (event) => {
 };
 
 const sendMyName = () => {
-  //pass on myName
-  const data = {
-    type: 'updateName',
-    name: $myName.innerHTML,
-  };
-  peer.send(JSON.stringify(data));
+  try {
+    //pass on myName
+    const data = {
+      type: 'updateName',
+      name: $myName.innerHTML,
+    };
+    peer.send(JSON.stringify(data));
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 //If I'm going to have multiple screens = good idea to have generic function that receives elements to show
@@ -782,11 +775,6 @@ const updatePeerList = (clients) => {
       if (otherClient.id !== socket.id) {
         const $option = document.createElement('option');
         $option.value = otherClient.id;
-        /*         if (!otherClient.name == '') {
-          $option.textContent = otherClient.name;
-        } else {
-          $option.textContent = otherClient.id;
-        } */
         $option.textContent = otherClient.name || otherClient.id;
         $otherSocketIds.appendChild($option);
       }
@@ -798,18 +786,7 @@ const callSelectedPeer = () => {
   if ($otherSocketIds.value === '') {
     return;
   }
-
   console.log(`Call the selected peer: ${$otherSocketIds.value} `);
-  /*    if (peer) {
-    //if peer exists, send the name to the other peer
-    const data = {
-      type: 'updateName',
-      name: $otherSocketIds.name,
-    };
-    peer.send(JSON.stringify(data)); 
-    console.log('SEND DATA', data);
-  }  */
-
   callPeer($otherSocketIds.value);
 };
 
@@ -827,7 +804,6 @@ const callPeer = async (peerId) => {
   connectedPeerId = peerId;
   peer.on('signal', (signal) => {
     socket.emit('signal', peerId, signal);
-    //document.querySelector('.scores__other--user').innerHTML = peerId;
     console.log("I'm sending a signal to " + peerId);
   });
   peer.on('stream', (stream) => {
@@ -845,16 +821,12 @@ const callPeer = async (peerId) => {
     console.log('error');
   });
 
-  /*testing*/
-  /* So once I connect to someone, I could update here some visuals and stuff!
-      Connect => The callee
-      Data => Callee receives from receiver*/
+  /*
+  /* Connect => The callee
+    Data => Callee receives from receiver*/
   peer.on('connect', () => {
-    //peer.send('hello threre!');
     console.log('hello its me from the sender'); //see this on callee side
-    //document.querySelector('.scores__other--user').innerHTML = peerId; //works only ID and if you are the caller
     $userContainer.classList.remove('visibility');
-    //send the name? -> callee receives the receivers name and displays it along with score count on the screen
   });
 
   //Caller / initiator
@@ -871,7 +843,6 @@ const callPeer = async (peerId) => {
         console.log(data.resuslt);
         console.log('finalResult container should be visible');
         $finalRemoteText.textContent = `${data.result} Simpsons`;
-
         document.getElementById(
           'finalImgExternal'
         ).src = `./assets/${data.result}.png`;
@@ -892,7 +863,6 @@ const callPeer = async (peerId) => {
         );
         $otherUserElement.textContent = otherUserName;
         document.querySelector('.remote__name').textContent = otherUserName;
-        /* $nameUserMarge.innerHTML = data.name; */
       }
     } catch (e) {
       console.log(e);
@@ -932,18 +902,9 @@ const handlePeerOffer = async (myPeerId, offer, peerId) => {
     console.log('hello its me from the receiver', peerId);
   });
 
-  /*could update css here for the receiver side - on connect, execute*/
+  /* receiver side */
   peer.on('data', (data) => {
     console.log('got a message from the callee?? ' + data); //receive from the callee on 'conncet'.
-
-    //display the received score
-
-    //Removed from html : $scoreRemote.textContent = JSON.parse(data).selectedAnswer;
-
-    // let dataParsed = JSON.parse(data);
-    //usersScoreList(dataParsed.score);
-
-    //show scores from the other peer(the recevier)
     try {
       data = JSON.parse(data);
       if (data.type === 'updateScore') {
@@ -955,29 +916,6 @@ const handlePeerOffer = async (myPeerId, offer, peerId) => {
         //  if (data.result === 'Marge') {
         //$finalResultRemote.classlist.remove('hidden');
         $finalRemoteText.textContent = `${data.result} Simpsons`;
-        /**
-         *   if (margeScore > homerScore) {
-    result = 'Marge';
-    document.querySelector('.result__title').textContent = `${result} Simpsons`;
-    document.getElementById('finalImgLocal').src =
-      'https://res.cloudinary.com/dygsdzhjl/image/upload/v1692225638/Marge_qeq3fr.png';
-    document.getElementById('finalImgLocal').alt = `${result} Simpsons`;
-    //    showResultMarge();
-  } else {
-    result = 'Homer';
-    document.querySelector('.result__title').textContent = `${result} Simpsons`;
-    document.getElementById(
-      'finalImgLocal'
-    ).src = `https://res.cloudinary.com/dygsdzhjl/image/upload/v1692225581/Homer_ewjxxc.png`;
-    document.getElementById('finalImgLocal').alt = `${result} Simpsons`;
-    //    showResultHomer();
-  }
-      document.getElementById('finalImgExternal').src = `${
-          data.result == 'Homer'
-            ? 'https://res.cloudinary.com/dygsdzhjl/image/upload/v1692225581/Homer_ewjxxc.png'
-            : 'https://res.cloudinary.com/dygsdzhjl/image/upload/v1692225638/Marge_qeq3fr.png'
-        }`;
-         */
         document.getElementById('finalImgExternal').src = `${
           data.result == 'Homer' ? './assets/Homer.png' : './assets/Marge.png'
         }`;
