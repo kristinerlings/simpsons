@@ -987,12 +987,6 @@ const handlePeerOffer = async (myPeerId, offer, peerId) => {
     console.log('got a message from the callee?? ' + data); //receive from the callee on 'conncet'.
 
     //display the received score
-
-    //Removed from html : $scoreRemote.textContent = JSON.parse(data).selectedAnswer;
-
-    // let dataParsed = JSON.parse(data);
-    //usersScoreList(dataParsed.score);
-
     //show scores from the other peer(the recevier)
     try {
       data = JSON.parse(data);

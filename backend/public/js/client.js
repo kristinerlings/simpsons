@@ -35,17 +35,8 @@ const $nameInput = document.getElementById('nameInput');
 let stepNumber = 0;
 let usernameValue = '';
 
-/* const hideGame = () => {
-  $tutorialContainer.style.display = 'flex';
-  $tutorialIntroContainer.style.display = 'none';
-  $gameContainer.style.display = 'none';
-  $tutorailConnectContainer.style.display = 'none';
-  $tutorialTutorialContainer.style.display = 'none';
-}; */
-
 const updateUserInterface = () => {
   if (stepNumber === 0) {
-    /* hideGame(); */
     $tutorialIntroContainer.style.display = 'flex';
     $tutorialPanel.style.backgroundImage = 'url(./assets/introsimpsons.png)';
     $tutorialPanel.style.backgroundRepeat = 'no-repeat';
@@ -96,7 +87,6 @@ const updateUserInterface = () => {
     $tutorailConnectContainer.style.display = 'flex';
     $tutorialTutorialContainer.style.display = 'none';
     $gameContainer.style.display = 'none';
-    /*  $backButton.classList.remove('visibility'); */
     $nextButton.textContent = 'Continue';
     $tutorialSteps.textContent = '2/3';
   } else if (stepNumber === 3) {
@@ -106,7 +96,6 @@ const updateUserInterface = () => {
     $tutorailConnectContainer.style.display = 'none';
     $tutorialTutorialContainer.style.display = 'flex';
     $gameContainer.style.display = 'none';
-    /*   $backButton.classList.remove('visibility'); */
     $nextButton.textContent = 'Start Quiz';
     $nextButton.style.backgroundColor = '#fbd239';
     $tutorialSteps.textContent = '3/3';
@@ -117,7 +106,6 @@ const updateUserInterface = () => {
   }
 };
 
-// Next button click event
 $nextButton.addEventListener('click', () => {
   if (stepNumber < 4) {
     stepNumber++;
@@ -125,7 +113,6 @@ $nextButton.addEventListener('click', () => {
   }
 });
 
-// Back button click event
 $backButton.addEventListener('click', () => {
   if (stepNumber > 0) {
     stepNumber--;
@@ -147,8 +134,6 @@ let connectedPeerId;
 let myStream;
 let peerId;
 
-// Data/ testing -> my code
-
 let $questionElement = document.querySelector(`#question`);
 const $margeCount = document.querySelector(`#natureScore`);
 const $homerCount = document.querySelector(`#indoorScore`);
@@ -166,8 +151,6 @@ const $chooseAnswerA = document.querySelector(`#optionOne`);
 const $chooseAnswerB = document.querySelector(`#optionTwo`);
 const $img__simpsons = document.querySelectorAll(`.img__simpsons`);
 
-/**/
-//const $scoreRemote = document.querySelector(`.remote__score`);
 const $userContainer = document.querySelector(`.container__users`);
 const $scoreUserHomer = document.querySelector(`.user__score--homer`);
 const $scoreUserMarge = document.querySelector(`.user__score--marge`);
@@ -175,9 +158,6 @@ const $scoreUserMarge = document.querySelector(`.user__score--marge`);
 const $finalResultRemote = document.querySelector('.showResult--remote');
 const $finalRemoteText = document.querySelector('.result__final');
 
-/**/
-
-//arduino starts here
 /*=======================================
           3. Arduino 
     =========================================*/
@@ -216,15 +196,11 @@ const handleClickConnect = async () => {
   await connect(port);
 };
 
-//was getting error that port was not defined, so added it as a parameter
-const updateArduino = (/*port*/) => {
-  //  if (port) {
+const updateArduino = () => {
   const dataToSend = { m: margeScore, h: homerScore };
   writer.write(JSON.stringify(dataToSend) + '\n');
-
   console.log(dataToSend, 'send data ');
   console.log('update arduino works?');
-  //  }
 };
 
 let startTime;
@@ -242,9 +218,7 @@ const resetTimer = () => {
 };
 
 const setTime = () => {
-  /*  resetTimer();  */ //reset timer
   startTime = getTime();
-  /* countdownInterval = setInterval(checkTime, 1000); // Update timer display every second */
 };
 
 /* const displayCheckTime = () => {
@@ -751,8 +725,6 @@ const init = async () => {
   console.log($chooseAnswerB, 'choose answer B works');
   console.log($chooseAnswerA, 'choose answer A works');
 
-  // usersScoreList(); //update user score list
-
   // Initial setup - Onboarding
   updateUserInterface();
 };
@@ -777,9 +749,6 @@ const initSocket = () => {
     if (signal.type === 'offer' && !peer) {
       await handlePeerOffer(myId, signal, peerId);
     }
-    /* document.querySelector('.scores__other--user').innerHTML =
-      'TESTING KRISTIN'; */
-
     peer.signal(signal);
   });
 
@@ -798,27 +767,8 @@ const initSocket = () => {
   socket.on('name', (clients) => {
     console.log('you are now named', clients);
     updatePeerList(clients);
-
-    //$screenName.classList.remove('screen--visible');
-    // showScreen($screenName);
   });
-
-  //$nameForm.addEventListener('submit', event => { handleSubmitName(event); });
 };
-
-/*form -start*/
-//const $form = document.getElementById('myForm');
-//const $resultDiv = document.getElementById('result');
-// $form.addEventListener('submit', (event) => {
-//   event.preventDefault(); // Prevent form submission to avoid page reload
-
-//const $nameInput = document.getElementById('name');
-//const name = $nameInput.value;
-
-// Display the value on the page
-//  $option.textContent = `Your name is: ${name}`;
-//  updatePeerList(name);
-// });
 
 const updatePeerList = (clients) => {
   console.log('ARRAY OF CLIENTS', clients);
@@ -1005,9 +955,32 @@ const handlePeerOffer = async (myPeerId, offer, peerId) => {
         //  if (data.result === 'Marge') {
         //$finalResultRemote.classlist.remove('hidden');
         $finalRemoteText.textContent = `${data.result} Simpsons`;
-        document.getElementById(
-          'finalImgExternal'
-        ).src = `./assets/${data.result}.png`;
+        /**
+         *   if (margeScore > homerScore) {
+    result = 'Marge';
+    document.querySelector('.result__title').textContent = `${result} Simpsons`;
+    document.getElementById('finalImgLocal').src =
+      'https://res.cloudinary.com/dygsdzhjl/image/upload/v1692225638/Marge_qeq3fr.png';
+    document.getElementById('finalImgLocal').alt = `${result} Simpsons`;
+    //    showResultMarge();
+  } else {
+    result = 'Homer';
+    document.querySelector('.result__title').textContent = `${result} Simpsons`;
+    document.getElementById(
+      'finalImgLocal'
+    ).src = `https://res.cloudinary.com/dygsdzhjl/image/upload/v1692225581/Homer_ewjxxc.png`;
+    document.getElementById('finalImgLocal').alt = `${result} Simpsons`;
+    //    showResultHomer();
+  }
+      document.getElementById('finalImgExternal').src = `${
+          data.result == 'Homer'
+            ? 'https://res.cloudinary.com/dygsdzhjl/image/upload/v1692225581/Homer_ewjxxc.png'
+            : 'https://res.cloudinary.com/dygsdzhjl/image/upload/v1692225638/Marge_qeq3fr.png'
+        }`;
+         */
+        document.getElementById('finalImgExternal').src = `${
+          data.result == 'Homer' ? './assets/Homer.png' : './assets/Marge.png'
+        }`;
         document.getElementById(
           'finalImgExternal'
         ).alt = `${data.result} Simpsons`;
