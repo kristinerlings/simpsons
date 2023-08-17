@@ -10,7 +10,7 @@
   <title>Which Simpsons are you?</title>
 </head>
 
-<body class="body"> <!-- call function   onload=" hideGame()"-->
+<body class="body">
   <div class="tutorial__container">
     <div class="tutorial__panel">
       <div class="tutorial__intro__container">
@@ -25,8 +25,6 @@
         <form id="nameForm" method="post" action="">
           <label for="nameInput" class="hidden">Name:</label>
           <input id="nameInput" type="text" name="nameInput" placeholder="Sarah Johnsson">
-          <!-- <button type="submit">Submit Name</button>
-          <span class="error"></span>-->
         </form>
       </div>
       <div class="tutorial__connect__container">
@@ -47,7 +45,7 @@
       <div class="tutorial__buttons">
         <button class="btn__back visibility">Back</button>
         <p class="tutorial__steps visibility"></p>
-        <button class="btn__next">Continue</button> <!-- onclick="updateUserInterface()"-->
+        <button class="btn__next">Continue</button>
       </div>
     </div>
   </div>
@@ -75,25 +73,7 @@
           <div class="start__name hidden screen screen--visible">
             <h2>Ready to find out which Simpsons character you are?</h2>
             <p>What is your name?</p>
-            <!-- <form id="nameForm" method="post" action="">
-              <input id="nameInput" type="text" name="nameInput">
-              <button type="submit">Submit Name</button>
-              <span class="error"></span>
-            </form>
-            <form id="myForm">
-              <label for="name">Name:</label>
-              <input type="text" id="name" required>
-              <button type="submit">Submit and continue</button>
-            </form> -->
           </div>
-          <!-- Connect with other user
-          <div class="start__connect">
-            <h2>Let's make it more fun</h2>
-            <p>Select an user to connect with</p>
-            <label for="otherSocketIds">Peer: </label>
-            <select id="otherSocketIds"></select>
-
-          </div>-->
         </section>
       </div>
 
@@ -103,7 +83,6 @@
       <!-- Remote Scores: other user -->
       <section class="container__users visibility">
         <h2 class="hidden">User Scores</h2>
-        <!--  <img class="user__img" src="./assets/homer.png"> -->
         <ul class="user__scores">
           <li class="scores__other--user">Other user:</li>
           <li><img src="./assets/icon-dark-f.svg" alt="icon marge" width="33" height="33"></li>
@@ -114,18 +93,14 @@
         <a href="#test" class="btn__retake hidden">Retake the quiz</a>
       </section>
     </section>
-    <!--</div>-->
-
 
 
     <section class="container__questions " id="test">
       <h3 class="hidden">The questions</h3>
-      <!--   <img class="img__simpsons img__marge" src="./assets/marge.png" alt="Marge Simpsons" width="306" height="418">-->
       <div class="camera">
         <div class="video__container">
           <video id="myVideo" playsinline autoplay muted></video>
           <!-- ====  SHOW  RESULTS   ==== -->
-          <!-- add video later as well -->
           <h3 class="video__myname"></h3>
           <div class="questions">
             <p class="question" id="question"></p>
@@ -154,7 +129,6 @@
                 <li class="score indoor" id="indoorScore">0</li>
               </ul>
             </div>
-
           </div>
 
           <h3 class="result__title"></h3>
@@ -174,7 +148,6 @@
         <!-- add video later as well -->
         <div class="showResult--remote hidden">
           <h2></h2>
-          <!--<h3 class="result__final">Waiting for your friends results...</h3>-->
           <div class="remote__visuals">
             <p class="remote__name hidden"></p>
             <h3 class="result__final">Waiting for your friends results<span class="loading"></span></h3>
@@ -182,21 +155,11 @@
             <video id="otherVideo" class="hidden" playsinline autoplay muted></video>
           </div>
         </div>
-
-        <!--      <button id="btn__send">Send Message</button>-->
       </div>
-      <!-- <img class="img__simpsons img__homer" src="./assets/homer.png" alt="Homer Simpsons" width="306" height="418">-->
 
-
-
-      <!-- retake quiz -->
-
-      <!-- <a href="#test" class="btn__retake hidden">Retake the quiz</a> -->
-
-    </section><!-- Close container__questions-->
+    </section>
 
   </div><!--  close container__page-->
-
 
 
 

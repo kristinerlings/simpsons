@@ -436,7 +436,10 @@ ul {
   bottom: 0;
   right: 0;
  }
-
+ 
+.loading{
+  position: absolute;
+}
 
  .loading:after {
    content: '';

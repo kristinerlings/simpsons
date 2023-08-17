@@ -65,17 +65,7 @@ app.on('ready', () => {
   /*   const appIcon = new Tray(
    './public/assets/doughnut-icon.icns' ); */
 
-  //open tab window
-  const createTabWindow = () => {
-    const tabWindow = new BrowserWindow({
-      width: 400,
-      height: 300,
-      webPreferences: {
-        nodeIntegration: true,
-      },
-    });
-    tabWindow.loadFile(path.join(__dirname, './public/index.html'));
-  };
+
 
   //submenu -> array -> each array can have array of submenus with label objects
   //click: listen to click event on submenu
@@ -85,22 +75,6 @@ app.on('ready', () => {
     {
       label: app.name,
       submenu: [
-/*         {
-          label: 'New Tab',
-          click: createTabWindow,
-        },
-        { type: 'separator' }, */
-      /*   {
-          label: 'New Window',
-          click: createWindow,
-        }, */
-        /*    {
-          label: 'Open with Chrome',
-          click: () => {
-            const { shell } = require('electron');
-            shell.openExternal('/');
-          },
-        }, */
         {
           role: 'Close',
         },
@@ -111,11 +85,6 @@ app.on('ready', () => {
     {
       label: 'File',
       submenu: [
-      /*   {
-          label: 'New Tab',
-          click: createTabWindow,
-        }, */
-/*         { type: 'separator' }, */
         {
           label: 'New Window',
           click: createWindow,
